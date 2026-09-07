@@ -1,122 +1,29 @@
 ---
-title: "Aflux API Authentication: Creating and Using API Keys"
-sidebarTitle: "Authentication"
-description: "Generate an Aflux API key from your dashboard and pass it as a Bearer token on every request. Learn to create, rotate, and revoke keys securely."
+title: "API authentication"
+description: "One header, one key."
 ---
 
-Every request to the Aflux REST API must include a valid API key. Aflux uses API keys passed as Bearer tokens — there is no OAuth flow or session-based authentication for the REST API. You generate keys from your dashboard, store them securely, and include them in the `Authorization` header of each request.
-
-<Note>
-  API keys and REST API access are available on **Business** and **Enterprise** plans only. Upgrade your subscription in the [Aflux dashboard](https://app.aflux.io) if you do not see the **API Keys** section in your settings.
-</Note>
-
-## Generating an API Key
-
-Follow these steps to create a new API key from your Aflux dashboard.
-
-<Steps>
-  <Step title="Open API Keys in Settings">
-    Log in to the [Aflux dashboard](https://app.aflux.io) and navigate to **Settings → API Keys**.
-  </Step>
-  <Step title="Create a New Key">
-    Click **New API Key** to open the key creation dialog.
-  </Step>
-  <Step title="Name Your Key">
-    Enter a descriptive name for the key so you can identify it later — for example, `Production App` or `Data Pipeline`. Using a name that reflects the key's purpose makes rotation and auditing easier.
-  </Step>
-  <Step title="Copy the Key">
-    After the key is created, copy it immediately and store it somewhere safe.
-
-    <Warning>
-      The API key is shown **only once**. Once you close or navigate away from this dialog, Aflux will not display the full key again. If you lose it, you must revoke the key and generate a new one.
-    </Warning>
-  </Step>
-  <Step title="Store the Key Securely">
-    Paste the key into an environment variable or a secrets manager. Never hard-code it directly in your source files. See [Security Best Practices](#security-best-practices) below for guidance.
-  </Step>
-</Steps>
-
-## Using Your API Key
-
-Pass your API key in the `Authorization` header of every request using the `Bearer` scheme:
-
-```
-Authorization: Bearer YOUR_API_KEY
-```
-
-### Example Request
+Every authenticated endpoint takes an API key as a bearer token:
 
 ```bash
-curl https://api.aflux.io/v1/signatures \
-  -H "Authorization: Bearer afxk_live_abc123..." \
-  -H "Content-Type: application/json"
+curl "https://backend.aflux.ai/api/v1/users/me" \
+  -H "Authorization: Bearer sk-af-v1-a1b2c3d4e5f6…"
 ```
 
-Replace `afxk_live_abc123...` with your actual API key. Include the `Content-Type: application/json` header whenever your request includes a JSON body.
+Create the key in the console under **Settings → API keys**, or through [the API](/account/api-keys). The same key authenticates the [MCP server](/mcp/overview).
 
-## API Key Prefixes
+## What does not need a key
 
-Aflux API keys use a prefix to indicate their type at a glance:
+A handful of endpoints are public because they are how an account comes into existence in the first place: registration, e-mail confirmation, sign-in, token refresh, the password-reset pair, and the OAuth entry points. Everything else requires a key.
 
-| Prefix | Type | Use |
-|--------|------|-----|
-| `afxk_live_` | Live key | Real data and production workflows |
-| `afxk_test_` | Test key | Development and integration testing |
+## What a missing or bad key gets you
 
-Always use a **test key** during development so that your experiments do not affect live signatures, campaigns, or QR codes.
-
-## Rotating API Keys
-
-Rotate your API keys periodically, or immediately if you suspect a key has been compromised. Follow this process to rotate a key with zero downtime:
-
-1. Generate a new API key in **Settings → API Keys**.
-2. Update your application or environment variables to use the new key.
-3. Verify that your application is authenticating successfully with the new key.
-4. Revoke the old key (see [Revoking API Keys](#revoking-api-keys) below).
-
-## Revoking API Keys
-
-To revoke a key, go to **Settings → API Keys**, find the key you want to remove, and click **Revoke**.
+A request with no credentials, an unknown key, a disabled key or an expired one is refused with **`401`**. There is no partial access and no anonymous read: the tool catalogue, the endpoint list and every object behind them all require a valid key.
 
 <Warning>
-  Revoking a key is **immediate and cannot be undone**. Any application still using the revoked key will receive `401 Unauthorized` responses. Make sure you have updated all dependent services before revoking.
+  A key carries your account's full authority, including spending your balance. Send it in the `Authorization` header only — never in a query string, where it would be written to logs and browser history.
 </Warning>
 
-## Invalid Key Error
+## Sessions
 
-If your API key is missing, malformed, or has been revoked, the API returns a `401` response:
-
-```json
-{
-  "error": {
-    "code": "unauthorized",
-    "message": "Invalid or missing API key.",
-    "status": 401
-  }
-}
-```
-
-If you see this error, check that:
-
-- The `Authorization` header is present and formatted as `Bearer <YOUR_API_KEY>`.
-- The key has not been revoked in **Settings → API Keys**.
-- You are using the correct key for the environment (live vs. test).
-
-## Security Best Practices
-
-Treat your API key like a password. A leaked key gives anyone full API access on your behalf.
-
-<CardGroup cols={2}>
-  <Card title="Use Environment Variables" icon="terminal">
-    Store keys in environment variables (e.g., `AFLUX_API_KEY`) rather than hard-coding them in source files. Load them at runtime using your framework's `.env` support or a secrets manager.
-  </Card>
-  <Card title="Never Commit Keys to Source Control" icon="code-branch">
-    Add `.env` files to your `.gitignore`. Use a tool like [git-secrets](https://github.com/awslabs/git-secrets) to scan for accidentally committed credentials.
-  </Card>
-  <Card title="Rotate Keys Periodically" icon="arrows-rotate">
-    Establish a key rotation schedule — for example, every 90 days — to limit the impact of any undetected exposure.
-  </Card>
-  <Card title="Use One Key per Application" icon="key">
-    Create a separate key for each application or service. This makes it easy to revoke access for a single integration without affecting others.
-  </Card>
-</CardGroup>
+The console signs people in with sessions rather than API keys, and those tokens travel in the same `Authorization` header. See [Sign-in and account security](/account/authentication) if you are building against that flow instead.

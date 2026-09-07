@@ -1,0 +1,73 @@
+---
+title: "Media"
+description: "Uploading images and video, and generating campaign creative with AI."
+---
+
+## Uploading a file
+
+Two calls: reserve a slot, then send the bytes.
+
+<Steps>
+  <Step title="Reserve the slot">
+    ```bash
+    curl -X POST "$AFLUX_API/uploads/init" \
+      -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+      -d '{"assetKind":"CAMPAIGN_MEDIA","contentType":"image/png","sizeBytes":184320,"originalName":"creative.png"}'
+    ```
+
+    Answers with an `uploadId`, the slot's `state` and an `expiresAt`.
+  </Step>
+  <Step title="Send the bytes">
+    ```bash
+    curl -X PUT "$AFLUX_API/uploads/$UPLOAD_ID/content" \
+      -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/octet-stream" \
+      --data-binary @creative.png
+    ```
+
+    Answers with the finished `Asset`, including its `assetId` and `publicUrl`.
+  </Step>
+</Steps>
+
+<Note>
+  The server verifies the actual file bytes against the `contentType` and `sizeBytes` you declared. Declaring one thing and sending another fails.
+</Note>
+
+### Limits
+
+| Asset kind | Accepted types | Max size |
+|---|---|---|
+| `PROJECT_LOGO` | `image/png`, `image/jpeg`, `image/svg+xml` | 5 MB |
+| `CAMPAIGN_MEDIA` | `image/png`, `image/jpeg`, `image/gif`, `video/mp4` | 25 MB |
+
+A slot moves through `INITIATED` → `UPLOADING` → `CLEANING` → `COMPLETED`, or ends in `FAILED` / `EXPIRED`.
+
+## Generating creative
+
+Image generation is asynchronous: submit, poll, attach.
+
+```bash
+REQ=$(curl -s -X POST "$AFLUX_API/image-generations" \
+  -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+  -d '{"projectId":"<uuid>","assetKind":"CAMPAIGN_MEDIA","aspectRatio":"SQUARE",
+       "userNotes":"A calm product shot on a dark background, no text.",
+       "objective":"TRAFFIC","destinationUrl":"https://example.com/staking"}')
+
+curl -s "$AFLUX_API/image-generations/$(echo "$REQ" | jq -r .requestId)" \
+  -H "Authorization: Bearer $AFLUX_KEY"
+```
+
+`status` moves `PENDING` → `GENERATING` → `SUCCEEDED` or `FAILED`. On success the response carries a `contentUrl`; on failure, an `error`.
+
+Not happy with it? `POST /api/v1/image-generations/{requestId}/regenerate` runs it again from the same request.
+
+`aspectRatio` is `SQUARE` or `PORTRAIT`.
+
+<Note>
+  `destinationUrl` here is a hint about who you are and nothing more: only the scheme, host and path reach the image model, never the query string. A URL still carrying a placeholder after the query string is cut is left out of the prompt altogether — the image is generated before the campaign exists, so there is no campaign to name.
+</Note>
+
+## Attaching creative to a campaign
+
+Pass asset ids in `mediaAssetIds` when you [create the campaign](/guides/campaigns). Assets carry a `source` of `USER_UPLOAD` or `AI_GENERATED`, so you can tell later which is which.
+
+`DELETE /api/v1/assets/{assetId}` removes one.

@@ -3,9 +3,28 @@
   "theme": "luma",
   "name": "Aflux",
   "colors": {
-    "primary": "#5bc8ff",
-    "light": "#5bc8ff",
-    "dark": "#171615"
+    "primary": "#72C4FF",
+    "light": "#97FFB3",
+    "dark": "#5BC8FF"
+  },
+  "fonts": {
+    "heading": {
+      "family": "Onest",
+      "weight": 600
+    },
+    "body": {
+      "family": "Onest",
+      "weight": 400
+    }
+  },
+  "icons": {
+    "library": "fontawesome"
+  },
+  "appearance": {
+    "default": "dark"
+  },
+  "background": {
+    "decoration": "gradient"
   },
   "favicon": "/favicon.svg",
   "logo": {
@@ -16,13 +35,31 @@
     "links": [
       {
         "label": "Support",
-        "href": "mailto:support@aflux.io"
+        "href": "mailto:support@aflux.ai"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Get Started",
-      "href": "https://app.aflux.io/register"
+      "label": "Open console",
+      "href": "https://console.aflux.ai"
+    }
+  },
+  "api": {
+    "playground": {
+      "display": "interactive"
+    },
+    "examples": {
+      "languages": [
+        "bash",
+        "javascript",
+        "python"
+      ]
+    },
+    "mdx": {
+      "server": "https://backend.aflux.ai",
+      "auth": {
+        "method": "bearer"
+      }
     }
   },
   "navigation": {
@@ -31,74 +68,73 @@
         "tab": "Documentation",
         "groups": [
           {
-            "group": "Get Started",
+            "group": "Get started",
             "pages": [
               "introduction",
               "quickstart",
-              "getting-started/account-setup",
-              "getting-started/connect-storage"
+              "concepts"
             ]
           },
           {
-            "group": "Core Modules",
+            "group": "Build a campaign",
             "pages": [
-              "modules/bulk-email",
-              "modules/e-signature",
-              "modules/qr-codes"
+              "guides/projects",
+              "guides/ad-copy",
+              "guides/finding-channels",
+              "guides/campaigns",
+              "guides/media"
             ]
           },
           {
-            "group": "Platform",
+            "group": "Run a campaign",
             "pages": [
-              "platform/dashboard",
-              "platform/file-management",
-              "platform/team-management",
-              "platform/notifications"
+              "guides/placements",
+              "guides/analytics"
             ]
           },
           {
-            "group": "Integrations",
+            "group": "Billing",
             "pages": [
-              "integrations/overview",
-              "integrations/google-drive",
-              "integrations/onedrive",
-              "integrations/dropbox"
+              "billing/balance",
+              "billing/deposits",
+              "billing/promo-codes"
             ]
           },
           {
-            "group": "Plans & Security",
+            "group": "Account",
             "pages": [
-              "plans/pricing",
-              "plans/security",
-              "plans/gdpr-compliance"
-            ]
-          },
-          {
-            "group": "Help",
-            "pages": [
-              "help/faq",
-              "help/troubleshooting"
+              "account/authentication",
+              "account/api-keys"
             ]
           }
         ]
       },
       {
-        "tab": "API Reference",
+        "tab": "API reference",
         "groups": [
           {
             "group": "Overview",
             "pages": [
               "api/overview",
               "api/authentication",
-              "api/webhooks"
+              "api/errors"
             ]
           },
           {
             "group": "Endpoints",
+            "openapi": "https://backend.aflux.ai/openapi"
+          }
+        ]
+      },
+      {
+        "tab": "MCP",
+        "groups": [
+          {
+            "group": "MCP server",
             "pages": [
-              "api/signatures",
-              "api/emails",
-              "api/qr-codes"
+              "mcp/overview",
+              "mcp/tools",
+              "mcp/protocol"
             ]
           }
         ]
@@ -107,8 +143,7 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/aflux_io",
-      "linkedin": "https://linkedin.com/company/atek-software"
+      "x": "https://x.com/aflux_ai"
     }
   }
 }

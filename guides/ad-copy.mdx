@@ -1,0 +1,133 @@
+---
+title: "Ad copy"
+description: "The markup Aflux posts are written in, the rules that decide whether a text can run, and how to validate it as you type."
+---
+
+Ad copy is written as marked-up text. The same string is used everywhere — you validate it, a campaign stores it, a channel owner may propose an edit to it, and it renders in the published post.
+
+## Markup
+
+Formatting is written the way Telegram writes it:
+
+| You write | You get |
+|---|---|
+| `*bold*` | **bold** |
+| `_italic_` | *italic* |
+| `__underline__` | underline |
+| `~strikethrough~` | ~~strikethrough~~ |
+| `\|\|spoiler\|\|` | spoiler |
+| `` `monospace` `` | `monospace` |
+| `>quote` | block quote, to the end of the line |
+
+Plus two of ours:
+
+| You write | You get |
+|---|---|
+| `--` | an em dash — |
+| `{these words}` | the post's link to your `destinationUrl` |
+
+A premium custom emoji is written as `![😀](tg://emoji?id=5368324170671202286)`. The emoji with that document id is drawn over the character in the brackets, and that character has to be a **single emoji** itself: it is what a reader whose client cannot resolve the id goes on seeing, and it is what the visible length counts.
+
+### Escaping
+
+Only ten characters mean anything and therefore need escaping:
+
+```
+\*  \_  \~  \`  \|  \{  \}  \>  \-  \\
+```
+
+Everything else is plain text. Unlike Telegram's Bot API MarkdownV2, full stops, brackets and percent signs need no backslash. An exclamation mark is plain too, except directly in front of a `[`, where it would begin the custom-emoji form — write `\!` there for a literal one.
+
+<Tip>
+  Inside a recognised web address, none of the ten mean anything: `mysite.com/my_page_2` keeps both underscores, `/a--b` keeps both hyphens, and `?utm_campaign={campaign}` keeps its braces. You never have to escape your own URL.
+</Tip>
+
+## The two rules that refuse most texts
+
+<Warning>
+  **The text must contain at least one `{...}` link.** The destination is attached to that anchor per placement and is never written into the text itself.
+
+  **The text may contain no web address other than your own domain** (or a subdomain of it). Anything else is a foreign link.
+</Warning>
+
+That is why `destinationUrl` is required when validating: it is what defines "your own domain", and the foreign-link rule cannot be evaluated without it. While a form field is still being typed, the URL is accepted with or without a scheme; anything that is not a URL either way is a `400`.
+
+## Length
+
+The limit is **700 visible characters** — markup removed, `--` already an em dash — counted in UTF-16 code units, so an emoji counts as 2. `visibleLength` in the validation response is exactly the number to put in an editor's character counter.
+
+The separate `maxLength` on the request field is a bound on request size, an order of magnitude above anything that could pass 700. Exceeding it is a `400`, not a validation error.
+
+## Validating
+
+```bash
+curl -X POST "https://backend.aflux.ai/api/v1/campaigns/ad-copy/validate" \
+  -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "text": "*Staking is live.* Earn on idle TON -- {open the app}.",
+    "destinationUrl": "https://example.com/staking"
+  }'
+```
+
+```json
+{
+  "valid": true,
+  "visibleLength": 52,
+  "errors": []
+}
+```
+
+The endpoint answers with **everything** that is wrong, not the first problem found, and each error carries an `offset` and `length` so an editor can underline it.
+
+<Note>
+  `offset` and `length` address the **marked-up string you sent**, not the visible text — that is where the mistake is. The visible text does not contain the `*` that was never closed. Both are in UTF-16 code units.
+</Note>
+
+Campaign creation applies exactly these rules, so a text that validates is a text that creates. There is no second verdict to discover later.
+
+## Error codes
+
+Branch on `code`, never on `message` — the wording is free to change.
+
+| Code | What went wrong |
+|---|---|
+| `LINK_REQUIRED` | The text contains no `{...}` at all. |
+| `FOREIGN_LINK` | A URL or domain that is not yours or a subdomain of yours. |
+| `TEXT_TOO_LONG` | The visible text is over 700 units. |
+| `UNCLOSED_ENTITY` | A delimiter was opened and the text ended first. |
+| `AMBIGUOUS_DELIMITER` | `___` — which is `__`+`_` or `_`+`__`, with nothing to choose between them. |
+| `OVERLAPPING_ENTITIES` | A closer belongs to a section that is not the innermost open one. Styles must nest. |
+| `EMPTY_ENTITY` | A delimiter pair with nothing between it. |
+| `EMPTY_LINK` | `{}` with no anchor text. |
+| `NESTED_LINK` | A `{` inside another `{...}`. |
+| `UNMATCHED_LINK_CLOSE` | A `}` with no `{` open. |
+| `INVALID_ESCAPE` | A backslash before a character that is not escapable. |
+| `INVALID_CUSTOM_EMOJI_FALLBACK` | The `[x]` of `![x](tg://emoji?id=...)` is not a single emoji. A letter, digit, word, space or nothing at all is refused. |
+| `INVALID_CUSTOM_EMOJI_ID` | The id is not an unsigned whole number that fits in 64 bits. |
+
+## Generating a draft
+
+```bash
+curl -X POST "https://backend.aflux.ai/api/v1/campaigns/generate-ad-copy" \
+  -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "projectContext": { "businessOverview": "...", "customerDemographics": "..." },
+    "userNotes": "Announce staking. Friendly, no hype.",
+    "objective": "TRAFFIC",
+    "destinationUrl": "https://example.com/staking?utm_source={channel}"
+  }'
+```
+
+Placeholders in `destinationUrl` are carried into the generated text character for character — the generator is told they are load-bearing and must not be renamed, completed, or tidied away with the rest of the query string.
+
+Generated copy is a draft, not a verdict. Validate it before you use it.
+
+## When a channel owner rewrites your ad
+
+If the campaign has `creativeChangesAllowed` (the default), a channel owner may propose his own wording. He types plain text into Telegram and the backend writes his formatting back into this same markup, so both texts render in one editor and the diff is between two texts of one kind:
+
+- `originalAdCopy` — your text, carried onto the placement so the card can show the diff on its own.
+- `proposedAdCopy` — his variant, set only while the placement is `AWAITING_CREATIVE_APPROVAL`.
+- `approvedAdCopy` — his variant once accepted; the text actually published.
+
+See [Placements](/guides/placements) for how to accept or reject one.

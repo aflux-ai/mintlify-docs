@@ -1,0 +1,48 @@
+---
+title: "MCP server"
+description: "Connect your own AI agent to Aflux — 37 tools over the Model Context Protocol, on the same API key."
+---
+
+`POST https://backend.aflux.ai/mcp` speaks the [Model Context Protocol](https://modelcontextprotocol.io), revision `2026-07-28`. Point Claude, Cursor or your own agent at it and it can do what the console does: research channels, draft copy, create campaigns, approve deals, read analytics.
+
+## Connecting
+
+The endpoint authenticates with an ordinary Aflux [API key](/account/api-keys) — the same key the REST API takes.
+
+```json
+{
+  "mcpServers": {
+    "aflux": {
+      "url": "https://backend.aflux.ai/mcp",
+      "headers": { "Authorization": "Bearer sk-af-v1-..." }
+    }
+  }
+}
+```
+
+<Warning>
+  A key carries the account's **full authority**, and `create_campaign` charges the entire budget the moment it is called. Give an agent its own key with a `creditLimit` and a short expiry — see [API keys](/account/api-keys).
+</Warning>
+
+## What it can do
+
+<CardGroup cols={2}>
+  <Card title="37 tools" icon="wrench" href="/mcp/tools">
+    Every advertiser action the console exposes, across projects, campaigns, channels, placements, media and billing.
+  </Card>
+  <Card title="Nothing it should not" icon="shield-check">
+    Authentication, 2FA, OAuth, API-key management, payment rails and hard deletes are deliberately **not** exposed.
+  </Card>
+</CardGroup>
+
+## Why the schemas are always right
+
+Tool schemas are derived from the live OpenAPI document at startup, not hand-written. A tool's schema is the only description of a request a model ever sees, so a second copy of `CreateCampaignRequest` living in the MCP layer would start lying the first time a field moved.
+
+Deriving also hands the model the prose the spec already carries — the [`destinationUrl` placeholder rules](/guides/campaigns#destination-url-placeholders), the [ad-copy markup rules](/guides/ad-copy) — which is what it needs to get a call right first time rather than by trial and `400`.
+
+## Anonymous access is refused
+
+`server/discover` and `tools/list` require credentials like everything else. A request with no key gets a `401`, not a tool catalogue.
+
+`GET /mcp` and `DELETE /mcp` answer **`405`** — see [Protocol](/mcp/protocol) for why that is the honest answer rather than a `401`.

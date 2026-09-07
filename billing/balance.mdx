@@ -1,0 +1,45 @@
+---
+title: "Balance and transactions"
+description: "Prepaid credit, bonus credit, and the ledger behind both."
+---
+
+Aflux runs on a prepaid balance. Campaigns draw from it; you top it up by [deposit](/billing/deposits) or [promo code](/billing/promo-codes).
+
+## Reading the balance
+
+```bash
+curl "$AFLUX_API/billing/balance" -H "Authorization: Bearer $AFLUX_KEY"
+```
+
+```json
+{ "currency": "USD", "available": "1240.00", "bonus": "50.00", "bonusSpentFirst": true }
+```
+
+| Field | Meaning |
+|---|---|
+| `available` | Credit you paid for. |
+| `bonus` | Credit from promo codes. |
+| `bonusSpentFirst` | Whether bonus credit is drawn down before paid credit. |
+
+## The ledger
+
+```bash
+curl "$AFLUX_API/billing/transactions" -H "Authorization: Bearer $AFLUX_KEY"
+```
+
+Every entry carries the amount, the balance after it, and what caused it:
+
+| `type` | Cause |
+|---|---|
+| `DEPOSIT` | A completed crypto payment. |
+| `CAMPAIGN_CHARGE` | A campaign committing its budget. |
+| `REFUND` | Money returned — a released commitment, a failed payout. |
+| `PROMO_BONUS` | A redeemed promo code. |
+
+`referenceType` (`PAYMENT`, `CAMPAIGN`, `PROMO`, `MANUAL`) plus `referenceId` point at what the entry is about, and `referenceName` and `projectName` are there so a statement reads without extra lookups.
+
+The response pages with `nextCursor`.
+
+<Note>
+  A campaign takes its **whole budget** out of the balance at creation. Money released later — a cancelled placement, a failed payout — comes back as a `REFUND` entry rather than by reversing the original charge.
+</Note>

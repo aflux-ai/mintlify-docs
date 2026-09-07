@@ -1,0 +1,18 @@
+---
+title: "Promo codes"
+description: "Redeeming bonus credit."
+---
+
+```bash
+curl -X POST "$AFLUX_API/billing/promo-codes/redeem" \
+  -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+  -d '{"code":"LAUNCH50"}'
+```
+
+```json
+{ "bonusCreditsCredited": "50.00", "message": "50 USD in bonus credit added." }
+```
+
+Bonus credit lands in the `bonus` field of your [balance](/billing/balance), separate from credit you paid for. Whether it is spent before paid credit is decided by `bonusSpentFirst` on the balance.
+
+A redemption also appears in the ledger as a `PROMO_BONUS` transaction.

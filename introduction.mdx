@@ -1,66 +1,66 @@
 ---
-title: "Aflux: Unified Document Workflow Platform for Teams"
-sidebarTitle: "Introduction"
-description: "Aflux unifies bulk email, e-signatures, and QR codes in one platform. Connect your cloud storage and manage document workflows from a single dashboard."
+title: "Introduction"
+description: "Aflux buys advertising in Telegram channels for you — it finds the channels, negotiates each placement, and publishes. You approve."
 ---
 
-Aflux is a unified document workflow platform built for small and medium-sized businesses. Instead of juggling separate tools for sending campaigns, collecting signatures, and sharing documents, Aflux brings everything together — with your own cloud storage staying exactly where it is.
+Aflux is an AI media buyer for Telegram. You describe what you are advertising; Aflux finds channels whose audience fits, contacts each channel owner, negotiates the price and the slot, publishes the post, and measures what it delivered.
+
+You keep the controls at every step. Nothing is booked and no money leaves your balance until you approve it.
+
+## What Aflux does for you
 
 <CardGroup cols={2}>
-  <Card title="Quick Start" icon="rocket" href="/quickstart">
-    Go from sign-up to your first document workflow in minutes
+  <Card title="Finds the channels" icon="magnifying-glass" href="/guides/finding-channels">
+    Three ways to search: from your ad copy, from a sentence describing the channels you want, or by look-alikes of channels you already like.
   </Card>
-  <Card title="Bulk Email" icon="envelope" href="/modules/bulk-email">
-    Send personalized mass email campaigns with full analytics
+  <Card title="Writes the copy" icon="pen-nib" href="/guides/ad-copy">
+    Generates ad text in Telegram's own formatting, then validates it against the same rules campaign creation applies.
   </Card>
-  <Card title="E-Signature" icon="file-signature" href="/modules/e-signature">
-    Collect legally-binding signatures from anyone, on any device
+  <Card title="Negotiates each deal" icon="comments" href="/guides/placements">
+    An AI agent talks to the channel owner in Telegram, agrees a price and a date, and brings the result back for your approval.
   </Card>
-  <Card title="QR Codes" icon="qrcode" href="/modules/qr-codes">
-    Generate smart, trackable QR codes for documents and folders
-  </Card>
-</CardGroup>
-
-## What Aflux does
-
-Aflux has three core modules — Bulk Email, E-Signature, and QR Codes — each designed to handle a specific document workflow while sharing a common storage layer and team management system.
-
-<CardGroup cols={3}>
-  <Card title="Bulk Email" icon="paper-plane">
-    Import contacts, design campaigns with a drag-and-drop editor, schedule sends, and track opens, clicks, and bounces in real time.
-  </Card>
-  <Card title="E-Signature" icon="pen-nib">
-    Upload a PDF, place signature fields, invite signers, and get a tamper-evident signed document with a full audit trail.
-  </Card>
-  <Card title="QR Codes" icon="qrcode">
-    Create branded QR codes for files or folders, control who can scan them, and monitor scan analytics in your dashboard.
+  <Card title="Reports what it delivered" icon="chart-line" href="/guides/analytics">
+    Views and reactions measured on the published posts, clicks measured on our own redirect, money reconciled per placement.
   </Card>
 </CardGroup>
 
-## How Aflux is different
-
-- **Your storage, your rules** — Connect Google Drive (OneDrive and Dropbox coming soon). Your files never move to Aflux's servers.
-- **All modules, every plan** — E-signatures, bulk email, and QR codes are included at every tier. No add-ons or per-feature upsells.
-- **Flat, transparent pricing** — No per-user penalties. Start free and upgrade when you're ready.
-- **EU-based, GDPR-first** — Built by Atek Software, an EU company operating since 2004.
-
-## Where to start
+## How a campaign runs
 
 <Steps>
-  <Step title="Create your account">
-    [Sign up for free](https://app.aflux.io/register) — no credit card required. Your free plan includes e-signing tasks, QR codes, and email sends.
+  <Step title="Create a project">
+    A project describes what you sell. Aflux reads your site and drafts the business context every later step reasons from. See [Projects](/guides/projects).
   </Step>
-  <Step title="Connect your storage">
-    Link Google Drive to keep your documents in your own cloud. OneDrive and Dropbox support is coming soon. See [Connect Storage](/getting-started/connect-storage).
+  <Step title="Write the ad copy">
+    Write it yourself or generate it, then validate. See [Ad copy](/guides/ad-copy).
   </Step>
-  <Step title="Choose a module">
-    Pick the workflow you need first — send a campaign, request a signature, or generate a QR code. Each module works independently.
+  <Step title="Pick the channels">
+    Run a search, strike off what you do not want, and keep the `matchToken` the search returns. See [Finding channels](/guides/finding-channels).
   </Step>
-  <Step title="Invite your team">
-    Add team members and assign roles. See [Team Management](/platform/team-management) for role options.
+  <Step title="Create the campaign">
+    Set the budget, the date window and the daily spread. The whole budget is committed at this point. See [Campaigns](/guides/campaigns).
+  </Step>
+  <Step title="Approve the deals">
+    Each channel becomes a placement. The agent negotiates; you approve or cancel each one. See [Placements](/guides/placements).
+  </Step>
+  <Step title="Read the results">
+    Views, reactions, clicks and cost per click, per placement and per campaign. See [Analytics](/guides/analytics).
   </Step>
 </Steps>
 
-<Tip>
-  Need a guided walkthrough? Follow the [Quick Start](/quickstart) to complete your first end-to-end workflow in under five minutes.
-</Tip>
+## Three ways in
+
+<CardGroup cols={3}>
+  <Card title="Console" icon="browser" href="https://console.aflux.ai">
+    The web app at `console.aflux.ai`. Everything below is available here first.
+  </Card>
+  <Card title="REST API" icon="code" href="/api/overview">
+    60 endpoints at `backend.aflux.ai`, authenticated with an API key.
+  </Card>
+  <Card title="MCP server" icon="robot" href="/mcp/overview">
+    Connect your own AI agent and let it run campaigns through 37 tools.
+  </Card>
+</CardGroup>
+
+<Note>
+  Aflux is not affiliated with, endorsed by, or operated by Telegram. Channels are run by independent third parties; Aflux negotiates with them on your behalf.
+</Note>

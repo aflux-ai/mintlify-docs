@@ -1,0 +1,73 @@
+---
+title: "Projects"
+description: "A project describes what you sell. Its AI context is what every later step reasons from."
+---
+
+A project is long-lived — you run many campaigns under one. Beyond the obvious fields (name, description, logo, brand colours) it carries an **AI context**: two written sections that the ad-copy generator, the channel matcher and the image generator all read.
+
+| Section | What it holds |
+|---|---|
+| `businessOverview` | What the business does, what it sells, how it positions itself. |
+| `customerDemographics` | Who buys it — the audience a channel search is trying to match. |
+
+## Creating one
+
+The console walks all three steps; through the API they are three calls.
+
+<Steps>
+  <Step title="Analyse a URL">
+    ```bash
+    curl -X POST "$AFLUX_API/projects/analyze-url" \
+      -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+      -d '{"url":"https://example.com","sourceType":"WEBSITE"}'
+    ```
+
+    Comes back with a suggested `name`, `description`, `suggestedColors` and a `logoCandidate`. `sourceType` is `WEBSITE` or `SOCIAL`. This step is optional — fill the fields yourself if you would rather.
+  </Step>
+  <Step title="Generate the AI context">
+    ```bash
+    curl -X POST "$AFLUX_API/projects/context/generate" \
+      -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+      -d '{"name":"Example","description":"A DeFi wallet for TON",
+           "logoLightAssetId":"<uuid>","brandColors":["#5bc8ff"],
+           "sourceUrl":"https://example.com","targetAudience":"TON retail traders"}'
+    ```
+
+    A logo asset is required here, so [upload one](/guides/media) first.
+  </Step>
+  <Step title="Create the project">
+    ```bash
+    curl -X POST "$AFLUX_API/projects" \
+      -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+      -d '{"sourceType":"WEBSITE","name":"Example","description":"A DeFi wallet for TON",
+           "logoLightAssetId":"<uuid>","brandColors":["#5bc8ff"],
+           "aiContext":{"businessOverview":"...","customerDemographics":"..."}}'
+    ```
+  </Step>
+</Steps>
+
+## Revising one section
+
+If the generated context reads wrong, rewrite a single section rather than regenerating both:
+
+```bash
+curl -X POST "$AFLUX_API/projects/context/revise-section" \
+  -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+  -d '{"section":"CUSTOMER_DEMOGRAPHICS","instruction":"They are institutional, not retail."}'
+```
+
+Sections are `BUSINESS_OVERVIEW` and `CUSTOMER_DEMOGRAPHICS`.
+
+## Listing, archiving, deleting
+
+```bash
+curl "$AFLUX_API/projects?sort=BY_ACTIVITY" -H "Authorization: Bearer $AFLUX_KEY"
+```
+
+Sort by `BY_ACTIVITY` or `BY_CREATED_AT`. The response pages with `nextCursor`.
+
+A project's status is `ACTIVE` or `ARCHIVED`. `DELETE /api/v1/projects/{projectId}` answers with a `DeletionResult` whose `outcome` is either `DELETED` or `ARCHIVED` — a project with history behind it is archived rather than removed, so its campaigns keep their context.
+
+<Note>
+  Archiving a project does not stop campaigns that are already running. Cancel their placements if that is what you want — see [Placements](/guides/placements).
+</Note>

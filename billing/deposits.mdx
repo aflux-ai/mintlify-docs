@@ -1,0 +1,50 @@
+---
+title: "Deposits"
+description: "Topping up in crypto — six networks, one irreversible transfer."
+---
+
+Deposits are processed by xRocket. You create a deposit, send crypto to the address it returns, and the balance is credited when the transfer confirms.
+
+```bash
+curl -X POST "$AFLUX_API/payments/deposit" \
+  -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+  -d '{"amount":"500.00","network":"TON"}'
+```
+
+```json
+{
+  "paymentId": "…", "provider": "XROCKET", "network": "TON",
+  "depositAddress": "UQ…", "depositMinAmount": "1.0",
+  "depositExpiresAt": "2026-09-08T12:00:00Z",
+  "status": "PENDING", "amount": "500.00", "currency": "USD",
+  "invoiceUrl": "https://…"
+}
+```
+
+## Networks
+
+`TON` · `BSC` · `ETH` · `BTC` · `TRX` · `SOL`
+
+<Warning>
+  Send only the asset on the network you asked for, to the address you were given, before `depositExpiresAt`. Crypto transfers are irreversible: funds sent on the wrong network or to the wrong address cannot be recovered, and confirmation times are outside our control.
+</Warning>
+
+Watch `depositMinAmount` — a transfer below it may not be credited.
+
+## Payment status
+
+| Status | Meaning |
+|---|---|
+| `CREATING` | The provider is still preparing the invoice. |
+| `PENDING` | Waiting for your transfer to confirm. |
+| `COMPLETED` | Credited. `creditsCredited` says how much reached the balance, `serviceFee` what was taken. |
+| `FAILED` | Did not go through; `failureReason` says why. |
+| `EXPIRED` | The window closed before a transfer arrived. |
+
+Track one with `GET /api/v1/payments/{paymentId}`, or list them all with `GET /api/v1/payments`.
+
+Once completed, the payment carries `transactionId` and `fromAddress` — the on-chain facts that tie the credit to your transfer.
+
+<Note>
+  `POST /api/v1/payments/webhook` is the provider's callback into Aflux, not something you call. It is in the spec because it is part of the public surface, not because it is for you.
+</Note>

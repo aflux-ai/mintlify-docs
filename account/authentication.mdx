@@ -1,0 +1,56 @@
+---
+title: "Sign-in and account security"
+description: "How people sign in to the console — password, Google, Telegram — and how to protect the account with 2FA."
+---
+
+This page is about **people signing in to the console**. For authenticating programs, see [API keys](/account/api-keys) and [API authentication](/api/authentication).
+
+## Ways to sign in
+
+<Columns cols={3}>
+  <Card title="Email and password" icon="envelope">
+    `POST /api/v1/auth/register`, then confirm the address with the emailed code before signing in.
+  </Card>
+  <Card title="Google" icon="google">
+    `GET /api/v1/auth/oauth/google/initiate` returns the URL to send the user to; the callback completes the sign-in.
+  </Card>
+  <Card title="Telegram" icon="telegram">
+    `POST /api/v1/auth/oauth/telegram` takes the payload from Telegram's login widget.
+  </Card>
+</Columns>
+
+All three end at the same place: a `LoginResponse` carrying the session tokens. `POST /api/v1/auth/refresh` renews them and `POST /api/v1/auth/logout` ends the session.
+
+## Passwords
+
+| Endpoint | Purpose |
+|---|---|
+| `POST /api/v1/auth/forgot-password` | Send a reset link. |
+| `POST /api/v1/auth/reset-password` | Complete a reset with the emailed token. |
+| `POST /api/v1/auth/change-password` | Change it while signed in. |
+
+## Two-factor authentication
+
+<Steps>
+  <Step title="Start the setup">
+    `POST /api/v1/users/me/two-factor/setup` returns the secret and provisioning data for an authenticator app.
+  </Step>
+  <Step title="Confirm a code">
+    `POST /api/v1/users/me/two-factor/verify` with a code from the app turns 2FA on and answers with your **recovery codes**.
+  </Step>
+  <Step title="Store the recovery codes">
+    They are the way back in if the authenticator is lost. `POST /api/v1/users/me/two-factor/recovery-codes/regenerate` issues a fresh set and invalidates the old one.
+  </Step>
+</Steps>
+
+With 2FA on, sign-in becomes two calls: `POST /api/v1/auth/login`, then `POST /api/v1/auth/login/two-factor` with the code.
+
+Turn it off with `POST /api/v1/users/me/two-factor/disable`, which also requires a current code.
+
+`GET /api/v1/users/me/security` reports the account's current security state.
+
+## Profile and notifications
+
+`GET`/`PATCH /api/v1/users/me` read and update the profile.
+
+`GET`/`PATCH /api/v1/users/me/notifications` control which notifications you receive — placement approvals, negotiation results, billing events.
