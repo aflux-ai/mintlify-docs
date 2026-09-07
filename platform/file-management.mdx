@@ -1,0 +1,113 @@
+---
+title: "Managing Files and Cloud Storage in Aflux Platform"
+sidebarTitle: "File Management"
+description: "Browse, organize, and use files from Google Drive or Aflux-hosted storage. Upload, link, and manage documents across all Aflux modules."
+---
+
+Aflux gives you a single file browser that spans every storage provider connected to your account — your Google Drive, Aflux-hosted storage, and (when available) OneDrive and Dropbox — so you never need to leave the platform to find a document. You can upload files directly, organize them into folders, and attach them to email campaigns, signature requests, or QR codes without switching tools.
+
+## The Unified File Browser
+
+Open the file browser by clicking **Files** in the left sidebar. The left panel lists every connected storage source as a separate tree:
+
+- **Aflux Storage** — files uploaded directly to Aflux, hosted on GDPR-compliant EU infrastructure
+- **Google Drive** — your Drive folders and files, accessed via the OAuth connection you configured in **Settings → Integrations**
+- **OneDrive** *(coming soon)* — Microsoft OneDrive, available after connecting your Microsoft account
+- **Dropbox** *(coming soon)* — Dropbox Business or personal, available after authorizing access
+
+Click any source to expand its folder tree. Files from all providers appear in the same grid or list view on the right, with a small provider badge indicating where each file lives.
+
+<Note>
+  Aflux does not copy or duplicate files from external providers into your Aflux Storage quota. Files accessed from Google Drive, OneDrive, or Dropbox count against your provider's own storage — not your Aflux quota.
+</Note>
+
+## Browsing Connected Cloud Storage
+
+### Google Drive
+
+After connecting Google Drive in **Settings → Integrations → Google Drive**, your entire Drive hierarchy is browsable inside Aflux. Navigate to any folder, preview supported file types, and select files to use in any module. Changes you make to file organization in Google Drive are reflected in Aflux on the next folder refresh (click the **↻** icon to refresh).
+
+### OneDrive and Dropbox *(Coming Soon)*
+
+OneDrive and Dropbox integration follow the same pattern as Google Drive — connect once in Settings and browse your full folder structure from within Aflux. Watch the integrations page for availability updates.
+
+## Uploading Files to Internal Storage
+
+To upload a file to Aflux Storage:
+
+<Steps>
+  <Step title="Open the file browser">
+    Click **Files** in the left sidebar and select **Aflux Storage** from the source panel.
+  </Step>
+  <Step title="Navigate to a folder">
+    Open or create the folder where you want the file to live, or stay at the root level.
+  </Step>
+  <Step title="Upload the file">
+    Click **Upload** in the toolbar, then select files from your computer. You can upload multiple files at once. Drag-and-drop onto the file browser grid also works.
+  </Step>
+  <Step title="Confirm the upload">
+    A progress bar appears for each file. Once complete, files appear in the grid immediately and are available across all modules.
+  </Step>
+</Steps>
+
+## Plan Limits and Storage Quotas
+
+File size limits and total storage quotas vary by plan. Keep the following limits in mind when uploading large documents or managing a high-volume account:
+
+| Plan | Max File Size | Total Storage Quota |
+|---|---|---|
+| Free | 10 MB | 1 GB |
+| Pro | Unlimited | 5 GB |
+| Business | Unlimited | Unlimited |
+| Enterprise | Unlimited | Unlimited |
+
+<Warning>
+  Uploading a file that exceeds your plan's size limit will fail with an error at the point of upload. If you regularly work with large PDFs or high-resolution assets, consider upgrading your plan to remove the size restriction.
+</Warning>
+
+## Using Files Across Modules
+
+Once a file is in the browser — whether in Aflux Storage or a connected provider — you can use it directly in any module without re-uploading.
+
+<CardGroup cols={3}>
+  <Card title="Bulk Email" icon="envelope">
+    Attach files as email attachments or embed links to cloud-stored assets when building a campaign in the drag-and-drop editor.
+  </Card>
+  <Card title="E-Signature" icon="pen-nib">
+    Select a PDF from Aflux Storage or Google Drive as the document to send for signing. Only PDF files are supported for signature workflows.
+  </Card>
+  <Card title="QR Codes" icon="qrcode">
+    Link a QR code directly to a file in Aflux Storage or a connected cloud provider. The QR code resolves to a shareable URL for that file.
+  </Card>
+</CardGroup>
+
+When creating a new campaign, signature request, or QR code, click **Browse Files** at the file-selection step to open the unified file browser inline — choose your file and return to the workflow without interruption.
+
+## Organizing with Folders
+
+You can create folders inside Aflux Storage to keep documents organized by project, client, or module:
+
+- **Create a folder** — Click **New Folder** in the toolbar, enter a name, and press **Enter**.
+- **Move files** — Right-click any file and select **Move to**, then pick the target folder.
+- **Rename or delete** — Right-click any file or folder for rename and delete options.
+
+<Tip>
+  Create a top-level folder per module (e.g., `Email Assets`, `Contracts`, `QR Documents`) so team members always know where to find and place files for each workflow.
+</Tip>
+
+Folders inside connected cloud providers (Google Drive, OneDrive, Dropbox) are read from the provider and cannot be created or renamed from within Aflux — manage that structure directly in your cloud provider's interface.
+
+## Supported File Formats
+
+Not all file types are supported in every context. Use the table below as a quick reference:
+
+| Use Case | Supported Formats |
+|---|---|
+| E-Signature documents | PDF only |
+| Email attachments | PDF, DOCX, XLSX, PPTX, PNG, JPG, GIF, ZIP |
+| QR code target files | PDF, PNG, JPG, DOCX, XLSX, and any publicly accessible file |
+| File browser preview | PDF, PNG, JPG, GIF, WEBP, DOCX (read-only preview) |
+
+<Info>
+  If you need to sign a document that is currently in DOCX or another format, convert it to PDF before uploading it to Aflux. Most word processors export to PDF natively.
+</Info>

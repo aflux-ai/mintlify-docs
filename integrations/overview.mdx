@@ -1,0 +1,61 @@
+---
+title: "Aflux Integrations: Connect Your Cloud Storage Today"
+sidebarTitle: "Overview"
+description: "Aflux integrates with Google Drive, OneDrive, and Dropbox so your files stay in your own cloud. Learn which integrations are available and how they work."
+---
+
+Aflux is built around a bring-your-own storage model — your files stay in the cloud provider you already use, and Aflux connects to them directly without copying or migrating anything to Aflux servers. Whether you send a bulk email campaign, collect e-signatures, or attach a document to a QR code, you always work with the original file sitting in your own storage.
+
+## Why Bring-Your-Own Storage?
+
+Most document platforms silently copy your files into their own storage, creating duplicates you can't manage and raising questions about who actually owns your data. Aflux takes a different approach:
+
+- **Files stay yours.** Aflux reads and writes to your storage provider via a secure OAuth connection. Nothing is copied to Aflux infrastructure.
+- **No migration required.** Connect an existing Google Drive folder and start using your files immediately — no upload step.
+- **Real-time sync.** Because Aflux always references the live file in your storage, any update you make in Drive, OneDrive, or Dropbox is reflected instantly across all Aflux modules.
+- **Disconnect at any time.** Revoking the Aflux connection from your storage provider immediately removes Aflux's access. Your files are unaffected.
+
+## How Integrations Work
+
+When you connect a storage provider, Aflux requests a limited OAuth token that allows it to read and write only the files and folders you explicitly grant access to. Aflux never stores your OAuth credentials — only a short-lived refresh token used to maintain the connection. All traffic between Aflux and your storage provider is encrypted over TLS.
+
+Once connected, a storage provider appears as a file source inside each Aflux module. You can browse folders, select files, and attach them to email campaigns, signature requests, or QR codes without leaving the Aflux dashboard.
+
+## Connection Limits by Plan
+
+The number of storage integrations you can connect simultaneously depends on your plan:
+
+| Plan | Connected integrations |
+|---|---|
+| Free | 1 |
+| Pro | 3 |
+| Business | Unlimited |
+| Enterprise | Unlimited |
+
+<Note>
+Internal Storage is always available on every plan and does not count toward your integration limit.
+</Note>
+
+## Available Integrations
+
+<CardGroup cols={2}>
+  <Card title="Google Drive" icon="google-drive" href="/integrations/google-drive">
+    Connect your Google Drive account and use Drive files directly in Bulk Email, E-Signature, and QR Codes. Available on all plans today.
+  </Card>
+  <Card title="OneDrive" icon="microsoft" href="/integrations/onedrive">
+    Microsoft OneDrive integration is coming soon. Use this page to learn what it will support and how to join the waitlist.
+  </Card>
+  <Card title="Dropbox" icon="dropbox" href="/integrations/dropbox">
+    Dropbox integration is coming soon. Use this page to learn what it will support and how to join the waitlist.
+  </Card>
+  <Card title="Internal Storage" icon="hard-drive">
+    Every Aflux account includes built-in internal storage. No setup required — upload files directly from the Aflux dashboard and manage them from the Files section.
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+- [Connect Google Drive](/integrations/google-drive) — available now on all plans
+- [Learn about OneDrive](/integrations/onedrive) — coming soon
+- [Learn about Dropbox](/integrations/dropbox) — coming soon
+- [Compare plans](/plans/pricing) to see which storage limits apply to you

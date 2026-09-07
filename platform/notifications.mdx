@@ -1,0 +1,117 @@
+---
+title: "Notifications, Alerts, and Activity Timeline in Aflux"
+sidebarTitle: "Notifications"
+description: "Configure Aflux notifications for signatures, email bounces, and QR scans. Learn to read and filter the activity timeline audit log by plan."
+---
+
+Aflux keeps you informed at every step of your document workflows — from the moment a signer completes a request to when an email bounces or a QR code hits its scan limit. Notifications surface in the in-app notification center and optionally in your email inbox, while the activity timeline gives you a complete, timestamped audit trail of everything that happens on your account.
+
+## Notification Types
+
+Aflux generates notifications for the following events:
+
+<CardGroup cols={2}>
+  <Card title="Signature Completed" icon="circle-check">
+    Fires when all required signers have signed a document. Includes the document name and a link to the completed PDF.
+  </Card>
+  <Card title="Signature Declined" icon="circle-xmark">
+    Fires when any signer explicitly declines to sign. Includes the signer's name and an optional decline reason.
+  </Card>
+  <Card title="Email Bounce" icon="envelope-circle-check">
+    Fires when a sent email cannot be delivered to a recipient. Distinguishes between hard bounces (permanent) and soft bounces (transient).
+  </Card>
+  <Card title="QR Code Scanned" icon="qrcode">
+    Fires each time one of your QR codes is scanned. For high-volume codes, you can configure digest notifications instead of per-scan alerts.
+  </Card>
+  <Card title="Storage Quota Warning" icon="hard-drive">
+    Fires when your Aflux internal storage reaches 80% and again at 95% of your plan's quota, giving you time to free space or upgrade.
+  </Card>
+</CardGroup>
+
+## Where Notifications Appear
+
+Aflux delivers notifications through two channels:
+
+**In-app notification center** — Click the bell icon (🔔) in the top navigation bar from any page in Aflux. The center shows your most recent unread notifications in chronological order. Click any notification to jump to the relevant document, campaign, or QR code. Use **Mark all as read** to clear the unread count.
+
+**Email alerts** — Aflux can send notification emails to the address on your account. Email alerts include a brief summary of the event and a direct link back into the platform. You control which events send email alerts in your notification preferences.
+
+## Configuring Notification Preferences
+
+Tailor which events notify you and through which channel:
+
+<Steps>
+  <Step title="Open notification settings">
+    Click your account avatar in the bottom-left corner, select **Settings**, then choose **Notifications** from the left menu.
+  </Step>
+  <Step title="Choose events to track">
+    Each notification type has a row in the settings table. Enable or disable the toggle under **In-App** and **Email** independently for each event type.
+  </Step>
+  <Step title="Configure QR scan frequency">
+    For QR code scan events, choose between **Every scan** (a notification per scan) and **Daily digest** (one summary email per day). High-traffic codes benefit from the digest setting.
+  </Step>
+  <Step title="Save your preferences">
+    Click **Save Preferences**. Changes take effect immediately for all future events.
+  </Step>
+</Steps>
+
+<Note>
+  Advanced notification customization — including per-document notification rules, webhook delivery, and team-level notification routing — is available on Pro and above. On the Free plan, notifications follow the default per-account settings described above.
+</Note>
+
+## Activity Timeline
+
+The activity timeline is a complete audit log of every action taken across your Aflux account. Access it by clicking **Activity** in the left sidebar, or view a condensed version directly on the [dashboard](/platform/dashboard).
+
+Each timeline entry records:
+
+| Field | Description |
+|---|---|
+| **Timestamp** | Exact date and time of the action in your account's timezone |
+| **Actor** | The user who performed the action, or "Aflux System" for automated events |
+| **Event** | A plain-language description (e.g., *"Contract_Q2.pdf signed by Ana Ruiz"*) |
+| **Module** | Color-coded tag: Bulk Email, E-Signature, or QR Codes |
+| **Document / Resource** | A clickable link to the document, campaign, or QR code involved |
+
+### Audit Log Retention
+
+How far back the activity timeline goes depends on your plan:
+
+| Plan | Audit Log Retention |
+|---|---|
+| Free | 7 days |
+| Pro | 30 days |
+| Business | Custom (configurable up to unlimited) |
+| Enterprise | Custom (configurable up to unlimited) |
+
+<Warning>
+  Once an event falls outside your retention window, it is permanently removed from the timeline. If you need long-term audit records for compliance purposes, export your activity log regularly or upgrade to Business/Enterprise for extended retention.
+</Warning>
+
+## Filtering and Searching the Activity Log
+
+Use the controls above the timeline to narrow down events:
+
+<Accordion title="Filter by module">
+  Click the **Module** dropdown and select one or more modules — Bulk Email, E-Signature, or QR Codes. The timeline immediately updates to show only events from the selected modules.
+</Accordion>
+
+<Accordion title="Filter by date range">
+  Click the **Date Range** picker and choose a preset (Today, Last 7 Days, Last 30 Days) or set a custom start and end date. The range is limited by your plan's retention window.
+</Accordion>
+
+<Accordion title="Filter by user">
+  Click the **Actor** dropdown to show only events performed by a specific team member. This is especially useful for auditing a particular user's activity.
+</Accordion>
+
+<Accordion title="Search by keyword">
+  Type a document name, email address, or event description into the **Search** field. Aflux performs a full-text search across event descriptions within the active date range.
+</Accordion>
+
+<Accordion title="Export the activity log">
+  Click **Export** in the top-right corner of the timeline to download a CSV of the currently filtered view. The export includes all columns: timestamp, actor, event, module, and resource. Business and Enterprise accounts can also schedule automated daily or weekly CSV exports.
+</Accordion>
+
+<Tip>
+  Combine filters to audit specific workflows — for example, filter by the E-Signature module, a specific actor, and a one-week date range to review all signature actions a team member took during a project.
+</Tip>

@@ -1,0 +1,103 @@
+---
+title: "Connect Google Drive to Aflux | Cloud Storage Setup"
+sidebarTitle: "Google Drive"
+description: "Link your Google Drive account to Aflux and work with Drive files directly in Bulk Email, E-Signature, and QR Codes — without moving or copying them."
+---
+
+Connecting Google Drive lets you browse, select, and use your Drive files inside every Aflux module — no uploading or duplicating required. When you attach a Drive file to an email campaign or a signature request, Aflux references the original file in your Drive in real time, so your documents stay exactly where they already live.
+
+## What the Google Drive Integration Does
+
+Once connected, Google Drive appears as a file source throughout the Aflux interface. You can:
+
+- **Bulk Email** — attach Drive files as downloadable links or embedded content in email campaigns
+- **E-Signature** — send a Drive-hosted PDF directly for signing; the signed copy is saved back to the same Drive folder
+- **QR Codes** — point a QR code at any Drive file or folder; Aflux tracks scans without touching the file
+
+Aflux requests read and write access only to the specific files and folders you select — not to your entire Drive.
+
+## Prerequisites
+
+- A Google account (personal or Workspace)
+- An Aflux account on any plan (Free, Pro, Business, or Enterprise)
+- Pop-ups allowed in your browser for `app.aflux.io` (required for the Google OAuth window)
+
+## Connect Google Drive
+
+<Steps>
+  <Step title="Open Integrations settings">
+    Log in to [app.aflux.io](https://app.aflux.io) and navigate to **Settings → Integrations → Cloud Storage**.
+  </Step>
+  <Step title="Start the connection">
+    Click **Connect Google Drive**. A Google OAuth window opens in a new pop-up.
+  </Step>
+  <Step title="Choose your Google account">
+    Select the Google account you want to connect, or sign in if you are not already authenticated with Google in your browser.
+  </Step>
+  <Step title="Review and grant permissions">
+    Google displays the permissions Aflux is requesting (see the [Permissions](#permissions-aflux-requests) section below). Click **Allow** to continue.
+  </Step>
+  <Step title="Confirm the connection">
+    The pop-up closes and Google Drive appears as **Connected** under Cloud Storage in your Aflux settings. You can now select Drive files from within any Aflux module.
+  </Step>
+</Steps>
+
+## Permissions Aflux Requests
+
+Aflux requests the minimum Google Drive scopes needed to deliver the integration:
+
+| Permission | Why Aflux needs it |
+|---|---|
+| View and manage files you select | Read the files you explicitly choose in the Aflux file picker |
+| View metadata of files | Display file names, types, and sizes in the picker |
+| Write files to Drive | Save signed documents and generated files back to your Drive |
+
+<Info>
+Aflux does not request access to your full Google Drive. The picker grants access only to the files and folders you select during each session.
+</Info>
+
+## Use Drive Files in Each Module
+
+<Tabs>
+  <Tab title="Bulk Email">
+    When composing a campaign in the drag-and-drop editor, click **Insert → File from Cloud Storage**, choose **Google Drive**, and browse to the file you want to attach. Aflux generates a secure, trackable link to the file — recipients click through to the live Drive file.
+  </Tab>
+  <Tab title="E-Signature">
+    When creating a new signature request, click **Upload Document → From Google Drive**. Browse your Drive, select a PDF, and Aflux loads it into the signature editor. After all signers complete the document, the signed PDF is saved automatically to the same Drive folder the original came from.
+  </Tab>
+  <Tab title="QR Codes">
+    When creating or editing a QR code, set the destination to **File from Cloud Storage → Google Drive**. Select the file or folder you want the QR code to point to. Aflux resolves the link at scan time, so you can replace the underlying Drive file without changing the QR code.
+  </Tab>
+</Tabs>
+
+## Disconnect Google Drive
+
+To remove the Google Drive integration:
+
+1. Go to **Settings → Integrations → Cloud Storage**.
+2. Click the **···** menu next to Google Drive and select **Disconnect**.
+3. Confirm the disconnection in the dialog.
+
+Disconnecting removes Aflux's access token. Any QR codes, email campaigns, or signature requests that reference Drive files will lose access to those files until you reconnect.
+
+<Warning>
+If you revoke Aflux's permissions directly from your [Google Account security settings](https://myaccount.google.com/permissions), the integration disconnects immediately without any warning in Aflux. Re-connect from **Settings → Integrations → Cloud Storage** to restore access.
+</Warning>
+
+## Troubleshooting
+
+<Accordion title="I see a 'Permission denied' error when selecting a Drive file">
+  This usually means the file is owned by a different Google account or a shared Drive you do not have edit access to. Check the sharing settings on the file in Google Drive and ensure your connected Google account has at least **Viewer** access (or **Editor** access if Aflux needs to save a signed copy back).
+</Accordion>
+
+<Accordion title="The Google OAuth pop-up is blocked">
+  Your browser is blocking the OAuth pop-up. Allow pop-ups from `app.aflux.io` in your browser settings, then click **Connect Google Drive** again.
+</Accordion>
+
+<Accordion title="Aflux says my Google Drive connection has expired">
+  Google OAuth tokens expire if the connection is inactive for an extended period or if you changed your Google account password. Go to **Settings → Integrations → Cloud Storage**, click **Reconnect** next to Google Drive, and complete the OAuth flow again.
+</Accordion>
+
+<Accordion title="I connected the wrong Google account">
+  Disconnect the current account (**Settings → Integrations → Cloud Storage → ··· → Disconnect**) and reconnect with the correct account. Make sure you are signed in to the right Google account in your browser before clicking **Connect Google Drive**.
+</Accordion>

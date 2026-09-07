@@ -1,0 +1,114 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "luma",
+  "name": "Aflux",
+  "colors": {
+    "primary": "#5bc8ff",
+    "light": "#5bc8ff",
+    "dark": "#171615"
+  },
+  "favicon": "/favicon.svg",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Support",
+        "href": "mailto:support@aflux.io"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Get Started",
+      "href": "https://app.aflux.io/register"
+    }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "getting-started/account-setup",
+              "getting-started/connect-storage"
+            ]
+          },
+          {
+            "group": "Core Modules",
+            "pages": [
+              "modules/bulk-email",
+              "modules/e-signature",
+              "modules/qr-codes"
+            ]
+          },
+          {
+            "group": "Platform",
+            "pages": [
+              "platform/dashboard",
+              "platform/file-management",
+              "platform/team-management",
+              "platform/notifications"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "integrations/overview",
+              "integrations/google-drive",
+              "integrations/onedrive",
+              "integrations/dropbox"
+            ]
+          },
+          {
+            "group": "Plans & Security",
+            "pages": [
+              "plans/pricing",
+              "plans/security",
+              "plans/gdpr-compliance"
+            ]
+          },
+          {
+            "group": "Help",
+            "pages": [
+              "help/faq",
+              "help/troubleshooting"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "api/overview",
+              "api/authentication",
+              "api/webhooks"
+            ]
+          },
+          {
+            "group": "Endpoints",
+            "pages": [
+              "api/signatures",
+              "api/emails",
+              "api/qr-codes"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/aflux_io",
+      "linkedin": "https://linkedin.com/company/atek-software"
+    }
+  }
+}

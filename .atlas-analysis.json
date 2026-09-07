@@ -1,0 +1,108 @@
+{
+  "projectType": "saas",
+  "projectName": "Aflux",
+  "projectDescription": "Aflux is a unified document workflow platform that combines bulk email campaigns, electronic signatures, and QR code tracking in one place, with bring-your-own cloud storage and flat transparent pricing.",
+  "theme": "luma",
+  "primaryColor": "#5bc8ff",
+  "lightColor": "#171615",
+  "darkColor": null,
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "getting-started/account-setup",
+              "getting-started/connect-storage"
+            ]
+          },
+          {
+            "group": "Core Modules",
+            "pages": [
+              "modules/bulk-email",
+              "modules/e-signature",
+              "modules/qr-codes"
+            ]
+          },
+          {
+            "group": "Platform",
+            "pages": [
+              "platform/dashboard",
+              "platform/file-management",
+              "platform/team-management",
+              "platform/notifications"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "integrations/overview",
+              "integrations/google-drive",
+              "integrations/onedrive",
+              "integrations/dropbox"
+            ]
+          },
+          {
+            "group": "Plans & Security",
+            "pages": [
+              "plans/pricing",
+              "plans/security",
+              "plans/gdpr-compliance"
+            ]
+          },
+          {
+            "group": "Help",
+            "pages": [
+              "help/faq",
+              "help/troubleshooting"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "api/overview",
+              "api/authentication",
+              "api/webhooks"
+            ]
+          },
+          {
+            "group": "Endpoints",
+            "pages": [
+              "api/signatures",
+              "api/emails",
+              "api/qr-codes"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Bulk email campaigns with contact segmentation, scheduling, and delivery analytics",
+    "Legally-binding electronic signatures with multi-party workflows and audit trail",
+    "Smart QR code generation with lifecycle control, custom design, and scan analytics",
+    "Bring-your-own cloud storage (Google Drive, OneDrive, Dropbox) — no vendor lock-in",
+    "Unified dashboard for document activity, email performance, and signature tracking",
+    "Team management with roles, permissions, and per-module access control",
+    "GDPR-compliant, EU-based platform with end-to-end encryption",
+    "API access and webhooks for Business and Enterprise plans"
+  ],
+  "publicApiSurface": [
+    "POST /api/signatures — create a signature request",
+    "GET /api/signatures/{id} — retrieve signature status",
+    "POST /api/emails/campaigns — create and send a bulk email campaign",
+    "GET /api/emails/campaigns/{id}/analytics — retrieve campaign analytics",
+    "POST /api/qr-codes — generate a QR code",
+    "GET /api/qr-codes/{id}/scans — retrieve scan analytics",
+    "Webhooks: signature.completed, signature.declined, email.delivered, email.bounced, qr.scanned"
+  ]
+}

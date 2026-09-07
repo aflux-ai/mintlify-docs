@@ -1,0 +1,122 @@
+---
+title: "Connect Your Cloud Storage to Aflux and Manage Providers"
+sidebarTitle: "Connect Storage"
+description: "Connect Google Drive, OneDrive, or Dropbox to Aflux so your documents stay in your own cloud. Learn how to link, manage, and switch storage providers."
+---
+
+Aflux is built around a bring-your-own storage model: rather than copying your files into a proprietary silo, it reads and writes documents directly to the cloud storage you already use. Your files never leave the provider you trust, you retain full ownership, and there is nothing to migrate if you ever change tools. This page explains how to connect a provider, how to use Aflux's built-in internal storage as an alternative, and how to manage your storage configuration over time.
+
+## Why Bring-Your-Own Storage Matters
+
+<Tip>
+  Because Aflux works directly with your existing cloud storage, every document you process — signed PDFs, sent email templates, QR-linked files — lands straight in your own Google Drive, OneDrive, or Dropbox folder. There is zero data migration when you join Aflux, and zero migration if you ever leave.
+</Tip>
+
+Keeping your files in your own cloud means:
+
+- **You own your data** — Aflux never takes a copy of your documents for its own storage.
+- **No vendor lock-in** — disconnect Aflux at any time; your files stay exactly where they are.
+- **Familiar folder structure** — organise documents in Drive, OneDrive, or Dropbox the way you already do, and Aflux surfaces them automatically.
+- **Compliance-friendly** — for GDPR and other data-residency requirements, your data stays in the region your cloud provider guarantees.
+
+## Supported Storage Providers
+
+<Info>
+  **OneDrive and Dropbox integrations are coming soon.** Google Drive is fully available today. Sign up for the waitlist from **Settings → Integrations** to be notified the moment these providers launch.
+</Info>
+
+| Provider | Availability | Plans |
+|---|---|---|
+| Google Drive | ✅ Available now | All plans |
+| OneDrive | 🔜 Coming soon | All plans |
+| Dropbox | 🔜 Coming soon | All plans |
+| Internal Storage (built-in) | ✅ Available now | All plans (capacity varies) |
+
+## Connect Google Drive
+
+Connecting Google Drive takes under a minute and uses Google's standard OAuth flow — Aflux never sees or stores your Google password.
+
+<Steps>
+  <Step title="Open Integrations settings">
+    In the Aflux dashboard, click **Settings** in the left sidebar, then select **Integrations** from the settings menu.
+  </Step>
+
+  <Step title="Click Connect on Google Drive">
+    Find the **Google Drive** card and click **Connect**. Aflux will open a Google OAuth authorisation window in a new pop-up or tab.
+  </Step>
+
+  <Step title="Sign in to Google and grant access">
+    Select the Google account that holds the Drive you want to link. Review the permissions Aflux requests — it needs permission to read and write files in Drive — then click **Allow**.
+
+    <Note>
+      Aflux only accesses files and folders you explicitly share with it through the Aflux interface. It does not scan or index your entire Drive.
+    </Note>
+  </Step>
+
+  <Step title="Choose a default folder (optional)">
+    After authorisation, Aflux will prompt you to select a **default folder** in your Drive where new Aflux documents will be saved. You can pick an existing folder or create a new one (for example, `Aflux Documents`). You can change this folder at any time.
+  </Step>
+
+  <Step title="Confirm the connection">
+    Click **Save** to finalise. The Google Drive card in **Settings → Integrations** will now show a green **Connected** badge alongside your Google account email address. Your Drive is ready to use across all Aflux modules.
+  </Step>
+</Steps>
+
+## Use Internal Storage
+
+If you prefer not to connect a third-party provider — or while you wait for OneDrive and Dropbox to launch — you can use Aflux's **internal storage**. Internal storage is available on all plans with no setup required; it is the default until you connect an external provider.
+
+To confirm or switch to internal storage, go to **Settings → Integrations** and ensure the **Internal Storage** tile shows as active. All files uploaded or generated inside Aflux will be stored on Aflux-managed infrastructure, subject to your plan's storage quota.
+
+### Storage Limits by Plan
+
+| Plan | Internal Storage | External Storage |
+|---|---|---|
+| Free | 1 GB | Unlimited (provider limits apply) |
+| Pro | 5 GB | Unlimited (provider limits apply) |
+| Business | Unlimited | Unlimited (provider limits apply) |
+| Enterprise | Unlimited | Unlimited (provider limits apply) |
+
+<Info>
+  Storage consumed on an external provider (Google Drive, OneDrive, Dropbox) counts against your provider quota, not your Aflux quota. Aflux internal storage quota only applies to files stored on Aflux-managed infrastructure.
+</Info>
+
+## Manage Connected Providers
+
+You can view, disconnect, and switch storage providers at any time from **Settings → Integrations**.
+
+<Accordion title="View connected providers">
+  Navigate to **Settings → Integrations**. Each storage provider card displays its connection status, the linked account email, and the default folder path. A **Connected** badge (green) confirms an active link; a **Disconnected** badge (grey) means the provider is not currently linked.
+</Accordion>
+
+<Accordion title="Disconnect a provider">
+  On the provider card, click the **⋯ menu** (three dots) and select **Disconnect**. Aflux will ask you to confirm. Once disconnected, Aflux can no longer read or write to that account. Your files in the provider are unaffected — they remain exactly where they are.
+
+  <Warning>
+    If you disconnect your active storage provider while documents are in progress (for example, a signature request is pending), those workflows will continue to completion using cached references. However, new documents will fall back to internal storage until you reconnect a provider.
+  </Warning>
+</Accordion>
+
+<Accordion title="Switch the active provider">
+  Aflux supports one active external storage provider at a time. To switch — for example, from Google Drive to OneDrive once it launches — connect the new provider first (it will not become active immediately), then click **Set as Default** on the new provider card. Aflux will use the new provider for all subsequent file operations. Previously stored files are not moved.
+</Accordion>
+
+<Accordion title="Reconnect or reauthorise a provider">
+  If your cloud storage connection expires or is revoked (for example, you changed your Google password), the provider card will show a **Reauthorise** button. Click it and repeat the OAuth flow to restore the connection without losing your folder configuration.
+</Accordion>
+
+## Next Steps
+
+With storage connected, you are ready to start working with documents across all three Aflux modules:
+
+<CardGroup cols={3}>
+  <Card title="Send Bulk Email" icon="envelope" href="/modules/bulk-email">
+    Import contacts, design a campaign, and send personalised emails at scale.
+  </Card>
+  <Card title="Request E-Signatures" icon="signature" href="/modules/e-signature">
+    Upload a PDF, place signature fields, and collect legally binding signatures.
+  </Card>
+  <Card title="Create QR Codes" icon="qrcode" href="/modules/qr-codes">
+    Generate dynamic QR codes that link to files stored in your connected cloud.
+  </Card>
+</CardGroup>

@@ -1,0 +1,116 @@
+---
+title: "Aflux FAQ: Common Questions About Plans and Features"
+sidebarTitle: "FAQ"
+description: "Find answers to common questions about Aflux plans, modules, storage integrations, GDPR, and how Aflux compares to other document workflow tools."
+---
+
+Aflux brings e-signatures, bulk email, and QR codes together in a single platform that connects to the cloud storage you already use. If you're new to Aflux or evaluating whether it fits your workflow, the answers below cover the most common questions from our users.
+
+<Accordion title="What is Aflux?">
+  Aflux is a unified document workflow platform built by Atek Software. It combines three core modules — **E-Signature**, **Bulk Email**, and **QR Codes** — into one dashboard, so you can manage your entire document lifecycle without switching between tools.
+
+  What sets Aflux apart is its bring-your-own storage model: connect Google Drive (with OneDrive and Dropbox coming soon) and your files stay exactly where they are. Aflux never holds your documents hostage.
+</Accordion>
+
+<Accordion title="What does the Free plan include?">
+  The Free plan gives you everything you need to evaluate Aflux at no cost:
+
+  - **5** e-signing tasks per month
+  - **5** active QR codes
+  - **100** outbound emails per month
+  - Up to **3 users**
+
+  When you're ready to scale, the Pro and Business plans unlock higher limits, team permissions, 2FA, API access, and more.
+</Accordion>
+
+<Accordion title="Do I need to migrate my files to use Aflux?">
+  No. Aflux is designed around a bring-your-own storage model. Connect your Google Drive account and your files stay exactly where they already are — Aflux reads and writes to your Drive without copying anything into a separate silo.
+
+  OneDrive and Dropbox integrations are coming soon. For Business and Enterprise plans, FTP, SFTP, and WebDAV connections are also available.
+</Accordion>
+
+<Accordion title="Is Aflux legally compliant for electronic signatures?">
+  Yes. Aflux e-signatures are:
+
+  - **eIDAS compatible** — meets the EU regulation on electronic identification and trust services
+  - **Recognised in 190+ countries** — valid for the vast majority of standard business agreements globally
+  - **256-bit encrypted** — every document and signature is encrypted in transit and at rest
+  - **Audit trail included** — every signing event is logged with timestamps, IP addresses, and signer identity, giving you a tamper-evident record for legal purposes
+
+  <Note>
+    For high-assurance or qualified electronic signature (QES) requirements, contact our Enterprise team to discuss your specific compliance needs.
+  </Note>
+</Accordion>
+
+<Accordion title="What is the difference between sequential and parallel signing?">
+  Aflux supports two multi-signer workflows:
+
+  - **Sequential signing** — signers receive the document one after another, in the order you define. Signer 2 only gets the request after Signer 1 has completed their signature. Use this when approval order matters (e.g., employee → manager → legal).
+  - **Parallel signing** — all signers receive the signature request at the same time and can sign in any order. Use this when there is no required sequence and you want the fastest turnaround.
+
+  You choose the workflow when you create a signature request in the E-Signature module.
+</Accordion>
+
+<Accordion title="Can I brand my QR codes?">
+  Yes, on the **Pro plan and above**. Custom branding options include:
+
+  - Custom foreground and background **colours**
+  - **Logo embedding** directly in the centre of the QR code
+  - Export in **PNG, SVG, or PDF** format for both screen and print use
+
+  On the Free plan, QR codes are generated with default styling. Upgrade to Pro to unlock full branding controls.
+</Accordion>
+
+<Accordion title="Does Aflux support GDPR?">
+  Yes. Aflux is built by Atek Software, an EU company, and GDPR compliance is a foundational design principle — not an afterthought. Key measures include:
+
+  - **Bring-your-own storage** — your documents never leave your own cloud storage provider
+  - **Data residency** — EU-based infrastructure
+  - **Automatic unsubscribe** — every bulk email campaign includes a legally required unsubscribe link, managed automatically by Aflux
+  - **Right to erasure** — you can delete your account and associated Aflux data at any time
+  - **Audit logs** — available on all plans (7-day retention on Free, 30-day on Pro, configurable on Business/Enterprise)
+
+  For Data Processing Agreement (DPA) requests, contact our team at [support@aflux.io](mailto:support@aflux.io).
+</Accordion>
+
+<Accordion title="How do I cancel or change my plan?">
+  You can change or cancel your plan at any time from within the app:
+
+  1. Go to **Settings** → **Billing**
+  2. Select **Change Plan** to switch to a different tier, or **Cancel** to downgrade to Free
+  3. Confirm your choice
+
+  Changes take effect at the end of your current billing cycle. You retain access to your current plan's features until that date.
+</Accordion>
+
+<Accordion title="What happens to my data if I cancel?">
+  Your documents are safe. Because Aflux uses a bring-your-own storage model, all files stored in your connected Google Drive (or other cloud storage) remain untouched — Aflux has no ownership over them.
+
+  Aflux account data (profile, settings, team configuration, audit logs) is deleted in accordance with our privacy policy after account closure. We recommend exporting any reports or audit trails you need before cancelling.
+</Accordion>
+
+<Accordion title="How is Aflux different from DocuSign or PandaDoc?">
+  Aflux takes a fundamentally different approach in three ways:
+
+  | | Aflux | DocuSign / PandaDoc |
+  |---|---|---|
+  | **Scope** | E-signatures + bulk email + QR codes in one platform | Primarily e-signatures or proposals |
+  | **Pricing** | Flat monthly price per plan | Per-envelope or per-user fees that scale quickly |
+  | **File storage** | Your files stay in your own cloud storage | Documents stored on vendor servers |
+
+  With Aflux you get a broader document workflow toolkit at a predictable price, without giving up control of your files.
+</Accordion>
+
+<Accordion title="Is the API available on all plans?">
+  No. REST API access and webhook support are available on the **Business** and **Enterprise** plans only.
+
+  The Aflux API uses Bearer token authentication and is available at `https://api.aflux.io/v1`. Supported webhooks include events such as `signature.completed`, `email.delivered`, and `qr.scanned`.
+
+  If you are on the Free or Pro plan and need API access, consider upgrading or [contacting us](mailto:support@aflux.io) to discuss your requirements.
+</Accordion>
+
+<Accordion title="How do I contact support?">
+  You can reach the Aflux support team by emailing **[support@aflux.io](mailto:support@aflux.io)**. We aim to respond to all enquiries within one business day.
+
+  For urgent Enterprise issues, dedicated support channels are available — speak with your account manager for details.
+</Accordion>

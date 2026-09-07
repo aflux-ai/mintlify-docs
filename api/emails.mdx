@@ -1,0 +1,406 @@
+---
+title: "Email Campaigns API: Create, Send, and Analyze Emails"
+sidebarTitle: "Email Campaigns"
+description: "REST API endpoints for creating email campaigns, managing contact lists, and retrieving delivery analytics in Aflux. Requires Business or Enterprise plan."
+---
+
+The Email Campaigns API gives you full programmatic control over your bulk email workflows — create and schedule campaigns, build contact lists, and pull delivery analytics directly into your own dashboards or automations. All requests must include your API key as a Bearer token and are restricted to Business and Enterprise plans.
+
+<Note>
+  **Base URL:** `https://api.aflux.io/v1`  
+  All requests require the `Authorization: Bearer YOUR_API_KEY` header. API access is available on **Business** and **Enterprise** plans only.
+</Note>
+
+---
+
+## POST /emails/campaigns
+
+Create a new email campaign and either send it immediately or schedule it for a future time. Use merge tags such as `{{firstName}}` in your `html_content` to personalize each message with data from the contact list.
+
+### Request Parameters
+
+<ParamField body="name" type="string" required>
+  An internal label for the campaign, visible only in your Aflux dashboard and API responses. Not shown to recipients.
+</ParamField>
+
+<ParamField body="subject" type="string" required>
+  The email subject line shown to recipients. Supports merge tags (e.g. `Hello {{firstName}}, your invoice is ready`).
+</ParamField>
+
+<ParamField body="from_name" type="string" required>
+  The sender display name recipients see in their email client (e.g. `Acme Support`).
+</ParamField>
+
+<ParamField body="from_email" type="string" required>
+  The sender email address. Must be a verified domain in your Aflux account settings.
+</ParamField>
+
+<ParamField body="html_content" type="string" required>
+  The full HTML body of the email. Supports merge tags like `{{firstName}}`, `{{lastName}}`, and any custom fields defined on your contacts. Aflux automatically appends a compliant unsubscribe footer.
+</ParamField>
+
+<ParamField body="contact_list_id" type="string" required>
+  The ID of the contact list to send this campaign to. Create contact lists using the [POST /emails/contacts](#post-emailscontacts) endpoint or from the Aflux dashboard.
+</ParamField>
+
+<ParamField body="scheduled_at" type="string">
+  An ISO 8601 datetime at which the campaign send should begin. Omit this field to send the campaign immediately after creation. Example: `2024-12-01T09:00:00Z`.
+</ParamField>
+
+### Response Fields
+
+<ResponseField name="id" type="string">
+  The unique identifier for the campaign (e.g. `camp_abc123`).
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  The internal campaign name.
+</ResponseField>
+
+<ResponseField name="subject" type="string">
+  The email subject line.
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Current campaign status. One of `queued` (send pending), `sending` (in progress), or `sent` (completed).
+</ResponseField>
+
+<ResponseField name="contact_list_id" type="string">
+  The ID of the contact list targeted by this campaign.
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  ISO 8601 timestamp of when the campaign was created.
+</ResponseField>
+
+<ResponseField name="scheduled_at" type="string">
+  ISO 8601 datetime of the scheduled send, or `null` if sent immediately.
+</ResponseField>
+
+### Example Request
+
+```bash
+curl -X POST https://api.aflux.io/v1/emails/campaigns \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "November Product Update",
+    "subject": "What'\''s new at Acme, {{firstName}}",
+    "from_name": "Acme Team",
+    "from_email": "hello@acme.com",
+    "html_content": "<h1>Hi {{firstName}},</h1><p>Here'\''s what we shipped this month...</p>",
+    "contact_list_id": "list_xyz789",
+    "scheduled_at": "2024-12-01T09:00:00Z"
+  }'
+```
+
+### Example Response
+
+```json
+{
+  "id": "camp_abc123",
+  "name": "November Product Update",
+  "subject": "What's new at Acme, {{firstName}}",
+  "status": "queued",
+  "contact_list_id": "list_xyz789",
+  "created_at": "2024-11-15T14:00:00Z",
+  "scheduled_at": "2024-12-01T09:00:00Z"
+}
+```
+
+---
+
+## GET /emails/campaigns
+
+List all campaigns in your account, with optional filtering by status and pagination controls.
+
+### Query Parameters
+
+<ParamField query="status" type="string">
+  Filter by campaign status. Accepted values: `draft`, `queued`, `sending`, `sent`. Omit to return all statuses.
+</ParamField>
+
+<ParamField query="limit" type="integer">
+  Number of results per page. Default: `20`. Maximum: `100`.
+</ParamField>
+
+<ParamField query="offset" type="integer">
+  Number of results to skip for pagination. Default: `0`.
+</ParamField>
+
+### Response Fields
+
+<ResponseField name="data" type="array">
+  Array of campaign objects matching the applied filters.
+</ResponseField>
+
+<ResponseField name="total" type="integer">
+  Total number of campaigns matching the filter, regardless of pagination.
+</ResponseField>
+
+<ResponseField name="limit" type="integer">
+  The `limit` value applied to this response.
+</ResponseField>
+
+<ResponseField name="offset" type="integer">
+  The `offset` value applied to this response.
+</ResponseField>
+
+### Example Request
+
+```bash
+curl -X GET "https://api.aflux.io/v1/emails/campaigns?status=sent&limit=5&offset=0" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+### Example Response
+
+```json
+{
+  "data": [
+    {
+      "id": "camp_abc123",
+      "name": "November Product Update",
+      "subject": "What's new at Acme, {{firstName}}",
+      "status": "sent",
+      "contact_list_id": "list_xyz789",
+      "created_at": "2024-11-15T14:00:00Z",
+      "scheduled_at": "2024-12-01T09:00:00Z"
+    }
+  ],
+  "total": 1,
+  "limit": 5,
+  "offset": 0
+}
+```
+
+---
+
+## GET /emails/campaigns/\{id\}
+
+Retrieve the full details of a single campaign, including its current status and configuration.
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the campaign (e.g. `camp_abc123`).
+</ParamField>
+
+### Response Fields
+
+<ResponseField name="id" type="string">
+  The unique campaign identifier.
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  The internal campaign name.
+</ResponseField>
+
+<ResponseField name="subject" type="string">
+  The email subject line.
+</ResponseField>
+
+<ResponseField name="from_name" type="string">
+  The sender display name.
+</ResponseField>
+
+<ResponseField name="from_email" type="string">
+  The sender email address.
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Current status: `draft`, `queued`, `sending`, or `sent`.
+</ResponseField>
+
+<ResponseField name="contact_list_id" type="string">
+  The ID of the targeted contact list.
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  ISO 8601 creation timestamp.
+</ResponseField>
+
+<ResponseField name="scheduled_at" type="string">
+  Scheduled send time, or `null`.
+</ResponseField>
+
+### Example Request
+
+```bash
+curl -X GET https://api.aflux.io/v1/emails/campaigns/camp_abc123 \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+### Example Response
+
+```json
+{
+  "id": "camp_abc123",
+  "name": "November Product Update",
+  "subject": "What's new at Acme, {{firstName}}",
+  "from_name": "Acme Team",
+  "from_email": "hello@acme.com",
+  "status": "sent",
+  "contact_list_id": "list_xyz789",
+  "created_at": "2024-11-15T14:00:00Z",
+  "scheduled_at": "2024-12-01T09:00:00Z"
+}
+```
+
+---
+
+## GET /emails/campaigns/\{id\}/analytics
+
+Retrieve delivery and engagement analytics for a specific campaign. Analytics are available once a campaign has started sending and are updated in near real-time.
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the campaign.
+</ParamField>
+
+### Response Fields
+
+<ResponseField name="sent" type="integer">
+  Total number of emails sent from this campaign.
+</ResponseField>
+
+<ResponseField name="delivered" type="integer">
+  Number of emails successfully delivered to recipients' mailboxes.
+</ResponseField>
+
+<ResponseField name="opened" type="integer">
+  Number of unique email opens tracked.
+</ResponseField>
+
+<ResponseField name="clicked" type="integer">
+  Number of unique link clicks tracked within the email body.
+</ResponseField>
+
+<ResponseField name="bounced" type="integer">
+  Number of emails that bounced (hard or soft).
+</ResponseField>
+
+<ResponseField name="unsubscribed" type="integer">
+  Number of recipients who unsubscribed via the email's unsubscribe link.
+</ResponseField>
+
+<ResponseField name="open_rate" type="number">
+  Percentage of delivered emails that were opened. Calculated as `(opened / delivered) * 100`.
+</ResponseField>
+
+<ResponseField name="click_rate" type="number">
+  Percentage of delivered emails that recorded at least one link click. Calculated as `(clicked / delivered) * 100`.
+</ResponseField>
+
+### Example Request
+
+```bash
+curl -X GET https://api.aflux.io/v1/emails/campaigns/camp_abc123/analytics \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+### Example Response
+
+```json
+{
+  "sent": 1500,
+  "delivered": 1482,
+  "opened": 612,
+  "clicked": 204,
+  "bounced": 18,
+  "unsubscribed": 5,
+  "open_rate": 41.3,
+  "click_rate": 13.76
+}
+```
+
+<Info>
+  Open and click tracking use pixel and link-redirect techniques. Some email clients and privacy tools (e.g. Apple Mail Privacy Protection) may inflate open counts. Aflux notes estimated opens separately when detectable.
+</Info>
+
+---
+
+## POST /emails/contacts
+
+Create a new contact list and optionally populate it with contacts in a single request. You can then reference the returned list ID when creating campaigns.
+
+### Request Parameters
+
+<ParamField body="name" type="string" required>
+  A descriptive name for the contact list (e.g. `Newsletter Subscribers — Q4 2024`).
+</ParamField>
+
+<ParamField body="contacts" type="array">
+  An optional array of contact objects to add to the list immediately. You can also add contacts later via the dashboard.
+
+  <Expandable title="Contact object fields">
+    <ParamField body="contacts[].email" type="string" required>
+      The contact's email address. Must be unique within the list.
+    </ParamField>
+
+    <ParamField body="contacts[].name" type="string">
+      The contact's full name, used to populate the `{{firstName}}` and `{{lastName}}` merge tags when Aflux can parse them.
+    </ParamField>
+
+    <ParamField body="contacts[].custom_fields" type="object">
+      A free-form key-value object of additional contact data (e.g. `{ "company": "Acme", "plan": "pro" }`). Keys map directly to merge tags in your email HTML.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Response Fields
+
+<ResponseField name="id" type="string">
+  The unique identifier for the new contact list (e.g. `list_xyz789`).
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  The name of the contact list.
+</ResponseField>
+
+<ResponseField name="contact_count" type="integer">
+  Number of contacts added to the list, including any provided in the request body.
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  ISO 8601 timestamp of when the list was created.
+</ResponseField>
+
+### Example Request
+
+```bash
+curl -X POST https://api.aflux.io/v1/emails/contacts \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Newsletter Subscribers — Q4 2024",
+    "contacts": [
+      {
+        "email": "alice@example.com",
+        "name": "Alice Martin",
+        "custom_fields": { "company": "Acme", "plan": "pro" }
+      },
+      {
+        "email": "bob@example.com",
+        "name": "Bob Jones",
+        "custom_fields": { "company": "Globex", "plan": "free" }
+      }
+    ]
+  }'
+```
+
+### Example Response
+
+```json
+{
+  "id": "list_xyz789",
+  "name": "Newsletter Subscribers — Q4 2024",
+  "contact_count": 2,
+  "created_at": "2024-11-15T14:30:00Z"
+}
+```
+
+<Tip>
+  For large contact imports (10,000+ rows), upload a CSV file directly from the Aflux dashboard instead of using this endpoint — it handles deduplication and validation more efficiently at scale.
+</Tip>

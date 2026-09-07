@@ -1,0 +1,130 @@
+---
+title: "QR Codes: Create Smart, Trackable QR Document Links"
+sidebarTitle: "QR Codes"
+description: "Generate branded QR codes for files and folders in Aflux. Control access, track scan analytics, and update linked content without reprinting your codes."
+---
+
+The QR Codes module bridges your physical materials and your digital documents. Instead of printing a static URL that breaks the moment a file moves, you generate a dynamic QR code that stays constant while the content behind it can change at any time — no reprinting required. Link a QR code to a product data sheet, an event brochure, a contract folder, or any file in your connected cloud storage, then track every scan in real time with location, device, and time data.
+
+## Creating a QR Code
+
+You have full control over what a code links to, how it looks, and who can access it.
+
+<CardGroup cols={3}>
+  <Card title="Link to Files or Folders" icon="folder-open">
+    Point a QR code at a single file (PDF, image, video, spreadsheet) or an entire folder. Folder-level codes expose all contents inside, including files added after the code was created.
+  </Card>
+  <Card title="Custom Design" icon="palette">
+    Adjust foreground and background colours, embed your logo in the centre of the code, and choose between square and rounded module styles to match your brand.
+  </Card>
+  <Card title="Flexible Export Formats" icon="file-export">
+    Download your QR code as PNG for digital use, SVG for scalable print, or PDF for direct inclusion in print-ready documents — all from the same generation screen.
+  </Card>
+</CardGroup>
+
+## Access Control
+
+Not every document should be publicly accessible. Aflux lets you layer multiple access restrictions on any QR code without changing the code itself.
+
+<CardGroup cols={2}>
+  <Card title="Password Protection" icon="lock">
+    Require scanners to enter a password before the linked content loads. You can update or remove the password at any time without regenerating the code.
+  </Card>
+  <Card title="Expiration Dates" icon="calendar-xmark">
+    Set a date and time after which the code stops working. Ideal for time-limited offers, event passes, or documents that are only valid for a specific period.
+  </Card>
+  <Card title="Scan Limits" icon="hashtag">
+    Cap the total number of times a code can be scanned. Once the limit is reached, further scans display a customisable expired message.
+  </Card>
+  <Card title="IP Restrictions" icon="shield-halved">
+    Restrict access to specific IP ranges so that only scanners on your corporate network or a known location can view the linked content.
+  </Card>
+</CardGroup>
+
+## Scan Analytics
+
+Every scan generates a data point. Aflux aggregates these into a real-time analytics dashboard so you can measure the impact of physical campaigns, printed materials, and shared documents.
+
+<CardGroup cols={2}>
+  <Card title="Real-Time Tracking" icon="chart-line">
+    See scan counts update live. Drill into any time window to compare performance across days, weeks, or months.
+  </Card>
+  <Card title="Location Data" icon="map">
+    View a geographic heat map of where your scans originate, broken down by country, region, and city.
+  </Card>
+  <Card title="Device Analytics" icon="mobile-screen">
+    Understand whether your audience is scanning from iOS, Android, or desktop, and which browsers they use — useful for optimising the linked landing page.
+  </Card>
+  <Card title="Time Patterns" icon="clock">
+    Identify peak scanning hours and days to time future print distributions and campaigns more effectively.
+  </Card>
+</CardGroup>
+
+## Folder-Level QR Codes
+
+Link a QR code to a folder rather than a single file to create a living resource hub that updates automatically as you add, replace, or remove files inside the folder.
+
+- **Auto-sync**: new files added to the folder are immediately accessible to anyone who scans the code — no regeneration needed.
+- **Nested structure**: scanners see a clean file browser that reflects the folder's subdirectory structure, with breadcrumb navigation.
+- **Bulk access**: perfect for product catalogues, project document sets, event materials, and onboarding packs where content evolves over time.
+
+## Custom Design
+
+A QR code is a brand touchpoint. Aflux gives you the design tools to make it look intentional rather than generic.
+
+<Accordion title="Colour Customisation">
+  Set any foreground colour for the modules (the dark squares) and any background colour. Aflux automatically checks contrast ratios and warns you if the combination is likely to cause scan errors. Dark foreground on a light background always yields the most reliable scanning.
+</Accordion>
+
+<Accordion title="Logo Embedding">
+  Upload a PNG or SVG logo to embed in the centre of the code. Aflux reserves a safe zone and adds sufficient error-correction redundancy so the code scans correctly even with the logo present. Keep logos under 30% of the code area for best results.
+</Accordion>
+
+<Accordion title="Module & Corner Styles">
+  Choose between square, rounded, or dot-style modules and independently style the three corner finder patterns to create a distinctive look that still scans reliably on all standard QR readers.
+</Accordion>
+
+## Lifecycle Management
+
+<Tip>
+  Because Aflux QR codes are **dynamic**, the URL encoded in the printed code never changes — only the destination does. This means you can update the linked file, swap a brochure for a newer version, or point the code at a completely different document, all without reprinting a single poster, business card, or product label.
+</Tip>
+
+- **Enable / disable instantly**: toggle any code off from the dashboard and scanners immediately see a deactivated page. Toggle it back on at any time.
+- **Re-target**: change the linked file or folder at any point in the code's life. Historical scan data is retained and continues to accumulate under the same code record.
+- **Bulk actions**: select multiple codes to enable, disable, or delete them simultaneously — useful when managing codes across a product line or event series.
+
+## Plan Limits
+
+| Feature | Free | Pro | Business | Enterprise |
+|---|---|---|---|---|
+| Active QR codes | 5 | Unlimited | Unlimited | Unlimited |
+| Scan analytics | Basic (totals only) | Advanced (location, device, time) | Advanced | Advanced |
+| Password & expiration controls | ✓ | ✓ | ✓ | ✓ |
+| Custom branding (logo & colours) | ✗ | ✓ | ✓ | ✓ |
+| Custom domain for scan redirects | ✗ | ✗ | ✓ | ✓ |
+| Bulk code generation | ✗ | ✗ | ✓ | ✓ |
+| API access | ✗ | ✗ | ✓ | ✓ |
+
+## How to Generate Your First QR Code
+
+<Steps>
+  <Step title="Go to QR Codes → New QR Code">
+    Open the [Aflux dashboard](https://app.aflux.io) and click **QR Codes** in the left sidebar. Then click **New QR Code** in the top-right corner.
+  </Step>
+  <Step title="Select a file from your connected storage or enter a URL">
+    Click **Browse Storage** to pick a file or folder from your connected Google Drive (or OneDrive / Dropbox once available), or click **Enter URL** to link the code to any web address. The selected target is displayed as a preview below the input.
+  </Step>
+  <Step title="Customise colours, add your logo, and choose the output format">
+    In the **Design** panel, set your foreground and background colours, upload your logo, and pick a module style. Then select your download format: **PNG**, **SVG**, or **PDF**. A live preview updates as you make changes.
+  </Step>
+  <Step title="Set access options: password, expiration date, scan limit">
+    Open the **Access Control** tab. Toggle on **Password Protection** and enter a password if required, set an **Expiration Date** using the date picker, and enter a **Scan Limit** if you want to cap total scans. Leave all options off for an open, unlimited code.
+  </Step>
+  <Step title="Click Generate and download your QR code">
+    Click **Generate QR Code**. Aflux creates the code and opens the download dialog. Download in your chosen format — or click **Copy to Clipboard** to paste the PNG directly into a design tool.
+  </Step>
+  <Step title="Share or print it — scans are tracked in your Analytics tab">
+    Place the QR code on your printed materials, website, or email. Every scan is recorded immediately. Click into the code from your **QR Codes** list and open the **Analytics** tab to watch scan data accumulate in real time.
+  </Step>
+</Steps>

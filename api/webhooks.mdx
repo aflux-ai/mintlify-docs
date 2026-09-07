@@ -1,0 +1,178 @@
+---
+title: "Aflux Webhooks: Receive Real-Time Event Notifications"
+sidebarTitle: "Webhooks"
+description: "Configure Aflux webhooks for real-time event notifications on signatures, email delivery, and QR scans. Requires a Business or Enterprise plan."
+---
+
+Webhooks let Aflux push real-time event notifications to your own servers the moment something meaningful happens — a contract is signed, an email bounces, or a QR code is scanned. Instead of polling the API on a schedule, you register an endpoint URL and Aflux delivers a structured HTTP POST payload the instant each event occurs.
+
+<Note>
+  Webhooks are available on **Business** and **Enterprise** plans only. Upgrade your subscription in the [Aflux dashboard](https://app.aflux.io) if you do not see the **Webhooks** section in your settings.
+</Note>
+
+## Supported Events
+
+Aflux can notify your endpoint when any of the following events occur:
+
+<CardGroup cols={2}>
+  <Card title="signature.completed" icon="pen-nib">
+    All required signers have completed signing the document. Use this to trigger downstream actions like sending a countersigned copy or updating a CRM record.
+  </Card>
+  <Card title="signature.declined" icon="xmark">
+    A signer actively declined to sign. Use this to notify the document sender or pause a related workflow.
+  </Card>
+  <Card title="email.delivered" icon="envelope-circle-check">
+    A campaign email was successfully delivered to the recipient's mail server. Use this to confirm delivery and update engagement records.
+  </Card>
+  <Card title="email.bounced" icon="envelope-open">
+    A campaign email failed to deliver. Use this to flag the contact address for review or suppression.
+  </Card>
+  <Card title="qr.scanned" icon="qrcode">
+    A QR code was scanned. Use this to log activity, trigger access workflows, or update real-time scan counters in your own system.
+  </Card>
+</CardGroup>
+
+## Setting Up a Webhook Endpoint
+
+Before registering an endpoint in Aflux, make sure your server is ready to receive requests.
+
+<Steps>
+  <Step title="Prepare Your Endpoint">
+    Your endpoint must accept **HTTP POST** requests with a JSON body and return a `2xx` status code (e.g., `200 OK`) to acknowledge receipt. Aflux treats any non-`2xx` response as a failed delivery and will retry.
+  </Step>
+  <Step title="Open Webhooks in Settings">
+    Log in to the [Aflux dashboard](https://app.aflux.io) and go to **Settings → Webhooks → New Webhook**.
+  </Step>
+  <Step title="Enter Your Endpoint URL">
+    Paste the full URL of your receiving endpoint (e.g., `https://yourapp.example.com/webhooks/aflux`). The URL must be publicly reachable over HTTPS.
+  </Step>
+  <Step title="Select Events">
+    Choose one or more events from the list of [supported events](#supported-events) that you want to subscribe to. You can update this selection at any time.
+  </Step>
+  <Step title="Save and Confirm Connectivity">
+    Click **Save**. Aflux immediately sends a test ping to your endpoint to verify it is reachable and returning a `2xx` response. If the ping fails, check that your endpoint is publicly accessible and not blocked by a firewall.
+  </Step>
+</Steps>
+
+## Webhook Payload Structure
+
+Every webhook delivery is an HTTP POST request with a JSON body. The top-level fields are consistent across all event types; the `data` object contains event-specific details.
+
+```json
+{
+  "event": "signature.completed",
+  "timestamp": "2024-11-01T14:32:00Z",
+  "data": {
+    "id": "sig_abc123",
+    "document_name": "Contract.pdf",
+    "completed_at": "2024-11-01T14:32:00Z",
+    "signers": [
+      {
+        "name": "Jane Smith",
+        "email": "jane@example.com",
+        "signed_at": "2024-11-01T14:32:00Z"
+      }
+    ]
+  }
+}
+```
+
+<Expandable title="Payload field reference">
+  | Field | Type | Description |
+  |-------|------|-------------|
+  | `event` | string | The event type (e.g., `signature.completed`) |
+  | `timestamp` | string (ISO 8601) | The UTC time the event was generated |
+  | `data.id` | string | The unique ID of the affected resource |
+  | `data.document_name` | string | The name of the document (signature events only) |
+  | `data.completed_at` | string (ISO 8601) | When the workflow completed (signature events only) |
+  | `data.signers` | array | List of signer objects with `name`, `email`, and `signed_at` (signature events only) |
+</Expandable>
+
+## Verifying Webhook Signatures
+
+To ensure that incoming webhook requests genuinely originate from Aflux and have not been tampered with, verify the HMAC-SHA256 signature that Aflux attaches to every request.
+
+Aflux includes the signature in the `X-Aflux-Signature` request header as a hex-encoded string, computed using your webhook's **signing secret** (shown in the dashboard when you create or view a webhook endpoint).
+
+<Tabs>
+  <Tab title="Node.js">
+    ```javascript
+    const crypto = require('crypto');
+
+    function verifyWebhook(payload, signature, secret) {
+      const expected = crypto
+        .createHmac('sha256', secret)
+        .update(payload)
+        .digest('hex');
+      return crypto.timingSafeEqual(
+        Buffer.from(signature),
+        Buffer.from(expected)
+      );
+    }
+    ```
+
+    Pass the raw request body (as a string or `Buffer`) as `payload`, the value from the `X-Aflux-Signature` header as `signature`, and your webhook signing secret as `secret`.
+  </Tab>
+  <Tab title="Python">
+    ```python
+    import hashlib
+    import hmac
+
+    def verify_webhook(payload: bytes, signature: str, secret: str) -> bool:
+        expected = hmac.new(
+            secret.encode('utf-8'),
+            payload,
+            hashlib.sha256
+        ).hexdigest()
+        return hmac.compare_digest(expected, signature)
+    ```
+
+    Pass the raw request body as `payload` (bytes), the value from the `X-Aflux-Signature` header as `signature`, and your webhook signing secret as `secret`.
+  </Tab>
+  <Tab title="PHP">
+    ```php
+    function verifyWebhook(string $payload, string $signature, string $secret): bool {
+        $expected = hash_hmac('sha256', $payload, $secret);
+        return hash_equals($expected, $signature);
+    }
+    ```
+
+    Pass the raw request body string as `$payload`, the `X-Aflux-Signature` header value as `$signature`, and your webhook signing secret as `$secret`.
+  </Tab>
+</Tabs>
+
+<Warning>
+  Always use a **timing-safe comparison** function (such as `crypto.timingSafeEqual` in Node.js, `hmac.compare_digest` in Python, or `hash_equals` in PHP) when comparing signatures. Standard string equality checks are vulnerable to timing attacks.
+</Warning>
+
+## Retry Behavior
+
+If your endpoint returns a non-`2xx` response, or if Aflux cannot reach it at all, Aflux retries the delivery automatically using **exponential backoff**:
+
+| Attempt | Delay after previous attempt |
+|---------|------------------------------|
+| 1st retry | ~30 seconds |
+| 2nd retry | ~5 minutes |
+| 3rd retry | ~30 minutes |
+| 4th retry | ~2 hours |
+| 5th retry | ~8 hours |
+
+After 5 failed retries, Aflux marks the delivery as permanently failed and stops retrying. You can view and inspect failed deliveries in the webhook logs.
+
+<Tip>
+  Respond with `200 OK` as quickly as possible — ideally before doing any heavy processing. Queue the payload for asynchronous processing in your application to avoid timeouts that Aflux might interpret as delivery failures.
+</Tip>
+
+## Webhook Logs
+
+Aflux keeps a log of recent webhook deliveries for each endpoint, including the full request payload, response status, and any error details.
+
+To view the logs, go to **Settings → Webhooks → [your endpoint] → Logs**. You can use the logs to:
+
+- Inspect the exact payload Aflux sent for any past delivery.
+- Diagnose failed deliveries by reviewing the response your server returned.
+- Manually replay a failed delivery for testing or recovery.
+
+<Info>
+  Webhook logs are retained for **30 days**. If you need longer-term delivery records, log incoming payloads on your own server.
+</Info>

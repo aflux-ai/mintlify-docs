@@ -1,0 +1,141 @@
+---
+title: "Bulk Email: Send Mass Campaigns with Personalization"
+sidebarTitle: "Bulk Email"
+description: "Use Aflux Bulk Email to create, schedule, and track mass email campaigns. Manage contact lists, personalize content, and monitor delivery in real time."
+---
+
+The Bulk Email module lets you design, personalize, and deliver mass email campaigns — all from the Aflux dashboard. Whether you're a small business sending monthly newsletters or a marketing team running high-volume automated sequences, Bulk Email gives you the contact management, editor tooling, analytics, and compliance controls you need to run professional campaigns without leaving your document workflow.
+
+## Contact Management
+
+Your campaigns are only as good as your audience. Aflux gives you a full contact management system built into the platform so you never need to rely on a separate CRM just to send email.
+
+<CardGroup cols={2}>
+  <Card title="CSV & Excel Import" icon="file-import">
+    Upload contact lists directly from `.csv` or `.xlsx` files. Aflux maps columns to contact fields automatically and flags any rows with missing or malformed data before import.
+  </Card>
+  <Card title="Smart Segmentation" icon="filter">
+    Group contacts into segments using filters such as location, tag, engagement history, or any custom field. Send the right message to the right audience every time.
+  </Card>
+  <Card title="Duplicate Detection" icon="shield-check">
+    Aflux scans every import for duplicate email addresses and merges or skips them automatically, keeping your lists clean without manual effort.
+  </Card>
+  <Card title="Unlimited Contacts" icon="users">
+    Store as many contacts as you need on paid plans. There are no list-size caps — only per-send limits apply based on your plan tier.
+  </Card>
+</CardGroup>
+
+## Creating a Campaign
+
+The drag-and-drop campaign editor makes it easy to build polished, mobile-responsive emails without writing a single line of code. If you prefer full control, you can paste in custom HTML instead.
+
+<CardGroup cols={3}>
+  <Card title="Drag-and-Drop Editor" icon="pen-ruler">
+    Assemble emails from pre-built blocks — text, images, buttons, dividers, and social links — by dragging them into place.
+  </Card>
+  <Card title="Ready-Made Templates" icon="layout-template">
+    Start from a growing library of professionally designed templates covering newsletters, promotions, announcements, and transactional messages.
+  </Card>
+  <Card title="Custom HTML" icon="code">
+    Paste your own HTML for pixel-perfect control. Aflux renders a live preview and validates the markup before sending.
+  </Card>
+</CardGroup>
+
+All templates are mobile-responsive by default. The editor shows a side-by-side desktop and mobile preview so you can verify layout on both viewports before sending.
+
+## Personalization
+
+Generic email gets ignored. Aflux lets you address each recipient by name, adapt content based on their data, and conditionally show or hide entire sections.
+
+<Tip>
+  Use merge tags in your subject line or body to insert contact-specific data. The syntax is double curly braces: `{{firstName}}`, `{{lastName}}`, `{{company}}`, or any custom field you've added to your contact record. If a value is missing, you can define a fallback — for example, `{{firstName | "there"}}` renders as "there" when the first name is blank.
+</Tip>
+
+**Dynamic content blocks** let you swap out an entire image, heading, or call-to-action based on a segment the recipient belongs to. **Conditional sections** go further — you can show a block only `if country == "DE"` or hide a promo only for existing customers, all configured in the editor without code.
+
+## Scheduling
+
+<Note>
+  Campaign scheduling — including time-zone optimization, recurring sends, and A/B testing — requires a **Pro plan or higher**. Free-plan users can send campaigns immediately but cannot schedule them for a future time.
+</Note>
+
+<CardGroup cols={2}>
+  <Card title="Send Now or Schedule" icon="clock">
+    Dispatch a campaign immediately or pick an exact date and time. A built-in calendar picker makes it simple to plan weeks ahead.
+  </Card>
+  <Card title="Timezone Optimization" icon="globe">
+    Deliver at the optimal local time for each recipient. Aflux calculates each contact's timezone from their location data and staggers delivery accordingly.
+  </Card>
+  <Card title="Recurring Campaigns" icon="rotate">
+    Set a daily, weekly, or monthly cadence for newsletters or digest emails. Aflux re-evaluates your segment at each send so new subscribers are always included.
+  </Card>
+  <Card title="A/B Testing" icon="flask">
+    Test two subject lines, sender names, or content variants against a portion of your list, then automatically send the winner to the remainder.
+  </Card>
+</CardGroup>
+
+## Analytics
+
+Every campaign you send feeds a live analytics dashboard. No waiting for end-of-day reports — data updates as your audience opens, clicks, and engages.
+
+<CardGroup cols={2}>
+  <Card title="Delivery Metrics" icon="chart-bar">
+    Track opens, clicks, bounces, unsubscribes, and conversions in a single view. All rates are calculated in real time.
+  </Card>
+  <Card title="Click Heatmaps" icon="map-pin">
+    See exactly which links and buttons your recipients clicked, overlaid visually on your email template so you know what drives action.
+  </Card>
+  <Card title="Bounce Handling" icon="triangle-exclamation">
+    Hard bounces are automatically suppressed from future sends. Soft bounces are retried and escalated to suppression after repeated failures.
+  </Card>
+  <Card title="Export Reports" icon="download">
+    Export full recipient-level engagement data as CSV for use in your BI tools, CRM, or compliance records.
+  </Card>
+</CardGroup>
+
+## GDPR Compliance
+
+Aflux is built by an EU-based company and treats compliance as a first-class feature, not an afterthought.
+
+- **Automatic unsubscribe**: every campaign includes a one-click unsubscribe link. Opt-outs are honoured instantly and cannot be overridden.
+- **Suppression lists**: bounced and unsubscribed addresses are stored in a suppression list that prevents accidental re-send.
+- **SPF / DKIM / DMARC**: Aflux configures sender authentication on your behalf so your emails pass modern spam filters and inbox placement is maximised.
+- **Data residency**: all contact data is stored within the EU on infrastructure that meets GDPR Article 28 processor requirements.
+
+## Plan Limits
+
+| Feature | Free | Pro | Business | Enterprise |
+|---|---|---|---|---|
+| Emails per month | 100 per user | 1,000 per user | Unlimited | Unlimited + mass emailing |
+| Contact storage | Unlimited | Unlimited | Unlimited | Unlimited |
+| Campaign scheduling | ✗ | ✓ | ✓ | ✓ |
+| A/B testing | ✗ | ✓ | ✓ | ✓ |
+| Click heatmaps | ✗ | ✓ | ✓ | ✓ |
+| Advanced analytics & export | ✗ | ✓ | ✓ | ✓ |
+| Dedicated sending infrastructure | ✗ | ✗ | ✓ | ✓ |
+
+## How to Create Your First Campaign
+
+<Steps>
+  <Step title="Go to Bulk Email → New Campaign">
+    Open the [Aflux dashboard](https://app.aflux.io) and click **Bulk Email** in the left sidebar. Then click the **New Campaign** button in the top-right corner.
+  </Step>
+  <Step title="Enter a campaign name and subject line">
+    Give your campaign an internal name (only visible to your team) and write the subject line your recipients will see. You can use merge tags in the subject line, such as `{{firstName}}`, to personalise it.
+  </Step>
+  <Step title="Choose or build a template in the editor">
+    Select a template from the library or start from a blank canvas. Drag blocks from the left panel into your layout, then click any block to edit its content, colours, and spacing.
+  </Step>
+  <Step title="Select or import your contact list">
+    Click **Select Audience** and choose an existing segment or contact list. To use a new list, click **Import Contacts**, upload your CSV or Excel file, and map the columns before confirming.
+  </Step>
+  <Step title="Preview on desktop and mobile">
+    Use the **Preview** toggle at the top of the editor to switch between desktop and mobile views. Send a test email to yourself to verify personalisation and rendering in your inbox.
+  </Step>
+  <Step title="Schedule or send immediately">
+    Click **Next: Schedule**. Choose **Send Now** to dispatch immediately or **Schedule** to pick a future date and time. Enable **Timezone Optimisation** if you want Aflux to deliver at the best local time for each recipient.
+  </Step>
+  <Step title="Monitor results in the Analytics tab">
+    Once sending begins, open the **Analytics** tab inside your campaign to watch opens, clicks, and bounces accumulate in real time. Click **Export** at any time to download a full report.
+  </Step>
+</Steps>

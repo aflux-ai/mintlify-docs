@@ -1,0 +1,106 @@
+---
+title: "GDPR Compliance in Aflux: EU Data Privacy by Design"
+sidebarTitle: "GDPR"
+description: "Aflux is built by an EU company with GDPR at its core. Learn how personal data is handled, consent enforced, and your data subject rights exercised."
+---
+
+Aflux is developed by Atek Software, a company based in Romania and subject to EU law. GDPR compliance is not a feature that was added after the fact — it is a design constraint that shapes how Aflux stores data, processes personal information, and gives you control over everything your account touches. This page explains what data Aflux holds about you, how it is used, and what rights you and your contacts have.
+
+## Bring-Your-Own Storage and Data Minimization
+
+Aflux's bring-your-own storage model is the most significant architectural decision for GDPR purposes. When you connect Google Drive, OneDrive, or Dropbox, your documents are read and written directly in your cloud provider — they are never copied to or stored on Aflux infrastructure. This means:
+
+- **Aflux is not a data controller for your documents.** You are. Your documents stay under your cloud provider's data processing agreement, not Aflux's.
+- **Data minimization by design.** Because Aflux does not copy files, it cannot accumulate document data it should not have.
+- **Right to portability is trivially satisfied.** Your documents are already in your own storage — no export step needed.
+
+## Data Aflux Does Process
+
+Aflux holds a limited set of data necessary to operate the platform:
+
+| Data type | Purpose | Where it is stored |
+|---|---|---|
+| Account metadata | Authentication, billing, user management | Aflux infrastructure (EU) |
+| Email campaign analytics | Open rates, click rates, bounce tracking | Aflux infrastructure (EU) |
+| Signature records | Audit trail, legal evidence of signing events | Aflux infrastructure (EU) |
+| Audit logs | Security and compliance logging | Aflux infrastructure (EU) |
+| QR scan analytics | Scan counts, timestamps, geographic region | Aflux infrastructure (EU) |
+
+Aflux does not sell this data, share it with third parties for marketing purposes, or use it to train machine learning models.
+
+## Bulk Email: Consent and Unsubscribe Handling
+
+GDPR (and CAN-SPAM) require that recipients of marketing emails have given prior consent and can withdraw that consent at any time. Aflux enforces this at the platform level:
+
+- Every email campaign sent through Aflux automatically includes an **unsubscribe link** in the footer. This cannot be disabled.
+- When a recipient clicks unsubscribe, they are immediately removed from your contact list and marked as **unsubscribed**. Aflux will not allow you to send further campaigns to that contact.
+- Bounce and complaint signals from email providers are processed automatically — hard-bounced addresses are suppressed from future sends.
+
+<Warning>
+You are responsible for collecting and recording consent from your contacts before importing them into Aflux. Aflux provides the unsubscribe mechanism but cannot verify that your contact list was obtained lawfully. Sending unsolicited bulk email through Aflux violates the Terms of Service at [aflux.io/en/terms](https://aflux.io/en/terms).
+</Warning>
+
+## E-Signature: Processing Personal Data in Signing Workflows
+
+When you send a signature request, Aflux processes the following personal data:
+
+- The signer's **name and email address** (provided by you when creating the request)
+- **Signature image or typed text** submitted by the signer
+- **IP address and timestamp** of each signing event (part of the audit trail)
+- **Device and browser information** logged for eIDAS audit trail purposes
+
+This data forms the legally significant audit trail that gives the signed document its evidential value under eIDAS. Aflux retains signature records for the duration of your account. If you delete a signature request, its associated audit trail is also deleted.
+
+<Info>
+Signers who are not Aflux users do not create an account when they sign a document. Their personal data (name, email, IP, signature) is used solely to produce and record the signature event and is not used for any other purpose by Aflux.
+</Info>
+
+## Data Subject Rights
+
+GDPR grants EU residents a set of rights over their personal data. Here is how to exercise each right with respect to data Aflux holds:
+
+<Accordion title="Right of Access">
+  To request a copy of all personal data Aflux holds about you, email [support@aflux.io](mailto:support@aflux.io) with the subject line **Data Subject Access Request**. Aflux will respond within 30 days with a structured export of your account data.
+</Accordion>
+
+<Accordion title="Right to Rectification">
+  You can correct most account data (name, email address, contact details) directly in **Settings → Profile**. For data you cannot edit yourself, email [support@aflux.io](mailto:support@aflux.io).
+</Accordion>
+
+<Accordion title="Right to Erasure ('Right to Be Forgotten')">
+  To request deletion of your Aflux account and all associated personal data, email [support@aflux.io](mailto:support@aflux.io) with the subject line **Erasure Request**. Aflux will process the deletion within 30 days and confirm when complete. Note that audit logs required for ongoing legal obligations may be retained for the minimum period required by law before deletion.
+</Accordion>
+
+<Accordion title="Right to Data Portability">
+  You can export your contact lists, campaign analytics, and signature records from the Aflux dashboard at any time under **Settings → Export Data**. Your documents are already in your own cloud storage and require no export from Aflux.
+</Accordion>
+
+<Accordion title="Right to Object and Restrict Processing">
+  To object to or request restriction of specific processing activities, email [support@aflux.io](mailto:support@aflux.io). Aflux will assess the request and respond within 30 days.
+</Accordion>
+
+## Data Retention
+
+Aflux retains your data for as long as your account is active. Specific retention periods:
+
+| Data type | Retention |
+|---|---|
+| Audit logs | 7 days (Free), 30 days (Pro), Custom (Business/Enterprise) |
+| Email campaign analytics | Duration of account |
+| Signature records and audit trail | Duration of account |
+| QR scan analytics | Duration of account |
+| Account metadata | Duration of account + 30 days after deletion request |
+
+You control the retention of your own documents — they live in your cloud provider and are deleted when you delete them there.
+
+## Data Residency
+
+By default, all Aflux infrastructure is hosted within the European Union. Enterprise customers can configure specific data residency options to ensure that Aflux-processed data remains within a particular country or region. Contact [sales](https://aflux.io/en/sales) for details.
+
+## Legal Resources
+
+- **Privacy Policy** — [aflux.io/en/privacy](https://aflux.io/en/privacy)
+- **Terms of Service** — [aflux.io/en/terms](https://aflux.io/en/terms)
+- **Cookie Policy** — [aflux.io/en/cookies](https://aflux.io/en/cookies)
+
+For any data protection questions not covered on this page, email [support@aflux.io](mailto:support@aflux.io). Aflux's Data Protection Officer can be reached through the same address.
