@@ -1,0 +1,88 @@
+---
+title: "Tools"
+description: "The 37 tools, what each one costs you, and what has to happen before it works."
+---
+
+Call `tools/list` for the live catalogue with full schemas. The list below is the shape of it.
+
+<Warning>
+  One tool spends money: **`create_campaign` charges the entire budget the moment it is called**, and needs a `matchToken` from a channel search. **`approve_placement`** commits money to one channel. Everything else reads, drafts or arranges.
+</Warning>
+
+## Projects
+
+| Tool | What it does |
+|---|---|
+| `list_projects` | List your projects. |
+| `get_project` | One project by id. |
+| `create_project` | Create one. Needs an AI context and a logo asset. |
+| `update_project` | Change name, description, logo, colours or context. |
+| `archive_project` | Archive it. |
+| `analyze_project_url` | Read a website and suggest name, description and brand colours. |
+| `generate_project_context` | Draft the business overview and customer demographics. |
+| `revise_project_context` | Rewrite one section of that context. |
+
+## Campaigns
+
+| Tool | What it does |
+|---|---|
+| `list_campaigns` | Campaigns under a project. |
+| `get_campaign` | One campaign by id. |
+| `create_campaign` | **Charges the whole budget.** Consumes a `matchToken`. |
+| `update_campaign` | Only `approvalMode` can change after creation. |
+| `archive_campaign` | Archive it. |
+| `get_campaign_analytics` | Money and measured performance. |
+| `generate_ad_copy` | Draft ad text from the project context. |
+| `validate_ad_copy` | Check text against the rules creation will apply. |
+
+## Channels
+
+| Tool | What it does |
+|---|---|
+| `match_channels` | Search from your ad copy and project context. |
+| `match_channels_by_prompt` | Search from a sentence describing the channels you want. |
+| `find_similar_channels` | Look-alikes of channels you picked. |
+| `generate_channel_prompt` | Write a search prompt on your behalf. |
+| `suggest_distribution` | Spread a budget across a date window. |
+
+## Placements
+
+| Tool | What it does |
+|---|---|
+| `list_placements` | A campaign's placements and its queue. |
+| `get_placement` | One placement, with everything agreed on it. |
+| `get_placement_messages` | The negotiation transcript with the channel owner. |
+| `approve_placement` | **Commits money** to that channel. |
+| `reject_creative_change` | Keep your wording over the owner's proposal. |
+| `cancel_placement` | Cancel it. |
+
+## Media
+
+| Tool | What it does |
+|---|---|
+| `upload_asset` | Upload an image or video. |
+| `generate_campaign_image` | Start an AI image generation. |
+| `get_image_generation` | Poll one. |
+| `regenerate_image` | Run the same request again. |
+| `attach_generated_image` | Turn a finished generation into a campaign asset. |
+
+## Billing and account
+
+| Tool | What it does |
+|---|---|
+| `get_balance` | Available and bonus credit. |
+| `list_transactions` | The ledger. |
+| `redeem_promo_code` | Redeem bonus credit. |
+| `get_me` | The signed-in account. |
+| `update_me` | Update the profile. |
+
+## Two things a model gets wrong
+
+<AccordionGroup>
+  <Accordion title="Arguments are checked against a closed schema">
+    A misspelled argument is **refused**, not ignored. The rejection names what was accepted — `Unknown argument for get_project: typo. Accepted: projectId` — so a model can correct itself rather than silently doing the wrong thing.
+  </Accordion>
+  <Accordion title="Identity never comes from an argument">
+    No tool takes a user id. Identity is resolved from the API key on the request, so an agent cannot ask for someone else's data by passing a different id.
+  </Accordion>
+</AccordionGroup>

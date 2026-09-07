@@ -1,0 +1,222 @@
+/* ---------------------------------------------------------------------------
+   Aflux docs — visual system carried over from the aflux.ai landing.
+   Tokens are the landing's @theme block verbatim, so the two surfaces read as
+   one product. Selectors stay deliberately generic: Mintlify's internal class
+   names are not a public API, so anything keyed on them would break on their
+   next release.
+   --------------------------------------------------------------------------- */
+
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+:root {
+  /* Brand */
+  --aflux-blue: #5bc8ff;
+  --aflux-blue-bright: #72c4ff;
+  --aflux-green: #63e695;
+  --aflux-green-soft: #97ffb3;
+  --aflux-gradient: linear-gradient(90deg, var(--aflux-blue) 0%, var(--aflux-green) 100%);
+
+  /* Surfaces — dark is the brand default */
+  --aflux-bg: #171615;
+  --aflux-fg: #d6d5d4;
+  --aflux-muted: rgba(214, 213, 212, 0.6);
+  --aflux-border: rgba(214, 213, 212, 0.08);
+  --aflux-border-strong: rgba(214, 213, 212, 0.16);
+  --aflux-card: rgba(255, 255, 255, 0.04);
+
+  /* Geometry */
+  --aflux-radius: 16px;
+  --aflux-radius-lg: 20px;
+
+  --font-mono-aflux: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* --- Page ground -----------------------------------------------------------
+   The landing paints a noise texture over a flat warm near-black and floats two
+   wide, very soft colour glows behind the header. Both are decorative and must
+   never intercept a click, hence pointer-events: none on the layer.
+   -------------------------------------------------------------------------- */
+
+.dark body {
+  background-color: var(--aflux-bg);
+  color: var(--aflux-fg);
+}
+
+.dark body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: linear-gradient(rgba(23, 22, 21, 0.5), rgba(23, 22, 21, 0.5)),
+    url("/images/noise.png");
+  background-size: 60px 60px;
+  background-repeat: repeat;
+  opacity: 0.55;
+}
+
+.dark body::after {
+  content: "";
+  position: fixed;
+  top: -180px;
+  left: 0;
+  right: 0;
+  height: 620px;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(420px 420px at 28% 40%, rgba(151, 255, 179, 0.1), transparent 70%),
+    radial-gradient(420px 420px at 72% 40%, rgba(114, 196, 255, 0.1), transparent 70%);
+  filter: blur(60px);
+}
+
+/* --- Typography ----------------------------------------------------------- */
+
+code,
+pre,
+kbd,
+samp {
+  font-family: var(--font-mono-aflux);
+  font-feature-settings: "liga" 0;
+}
+
+/* The landing sets its section headings in a blue-to-green gradient. One
+   gradient heading per page is a signature; on every heading it is noise, so
+   this is deliberately limited to the page title. */
+main h1 {
+  background-image: var(--aflux-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  letter-spacing: -0.02em;
+}
+
+main h2,
+main h3 {
+  letter-spacing: -0.01em;
+}
+
+.dark main h2,
+.dark main h3,
+.dark main h4 {
+  color: #fff;
+}
+
+/* --- Links ---------------------------------------------------------------- */
+
+.dark main a:not([class*="card"]):not([class*="Card"]) {
+  text-decoration-color: rgba(114, 196, 255, 0.35);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 150ms ease, color 150ms ease;
+}
+
+.dark main a:not([class*="card"]):not([class*="Card"]):hover {
+  text-decoration-color: var(--aflux-blue-bright);
+}
+
+/* --- Surfaces: cards, code, tables, callouts ------------------------------ */
+
+.dark main table {
+  border-radius: var(--aflux-radius);
+  overflow: hidden;
+  border: 1px solid var(--aflux-border);
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.dark main thead {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.dark main th {
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: 0.01em;
+}
+
+.dark main td,
+.dark main th {
+  border-color: var(--aflux-border);
+}
+
+.dark main tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.dark main pre {
+  border-radius: var(--aflux-radius);
+  border: 1px solid var(--aflux-border);
+}
+
+.dark main :not(pre) > code {
+  background: rgba(114, 196, 255, 0.08);
+  border: 1px solid rgba(114, 196, 255, 0.14);
+  border-radius: 6px;
+  padding: 0.1em 0.36em;
+  font-size: 0.875em;
+  color: #cfe9ff;
+}
+
+.dark main blockquote {
+  border-left: 2px solid transparent;
+  border-image: var(--aflux-gradient) 1;
+}
+
+/* Cards, accordions and callouts pick up the landing's radius and hairline. */
+.dark main [class*="rounded"] {
+  border-color: var(--aflux-border);
+}
+
+/* --- Chrome --------------------------------------------------------------- */
+
+#navbar {
+  backdrop-filter: blur(12px);
+}
+
+.dark #navbar {
+  border-bottom: 1px solid var(--aflux-border);
+}
+
+/* --- Selection ------------------------------------------------------------ */
+
+::selection {
+  background: rgba(114, 196, 255, 0.28);
+  color: #fff;
+}
+
+/* --- Light mode ------------------------------------------------------------
+   The brand is dark-only, but the docs keep a working light theme: same accents,
+   no texture, no glow. Nothing here should look like an afterthought.
+   -------------------------------------------------------------------------- */
+
+html:not(.dark) main h1 {
+  background-image: linear-gradient(90deg, #1b8fd0 0%, #2fa563 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+html:not(.dark) main :not(pre) > code {
+  background: rgba(27, 143, 208, 0.07);
+  border: 1px solid rgba(27, 143, 208, 0.16);
+  border-radius: 6px;
+  padding: 0.1em 0.36em;
+  font-size: 0.875em;
+}
+
+html:not(.dark) main table {
+  border-radius: var(--aflux-radius);
+  overflow: hidden;
+  border: 1px solid rgba(23, 22, 21, 0.1);
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* --- Motion --------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,89 @@
+---
+title: "Analytics"
+description: "What each number measures, when it settles, and which ones you must never read on their own."
+---
+
+`GET /api/v1/campaigns/{campaignId}/analytics` answers with money, per-channel money, and measured performance.
+
+## Money
+
+```json
+{ "budget": "500.00", "spent": "310.00", "reserved": "85.00", "remaining": "105.00", "currency": "USD" }
+```
+
+These always reconcile:
+
+```
+spent + reserved + remaining = budget
+```
+
+- **`spent`** — what actually left the account: `PAID` and every status after it.
+- **`reserved`** — committed when you approved a placement, not yet paid out.
+- **`remaining`** — uncommitted; a further approval can still spend it.
+
+`perChannel` breaks the same money down per placement: the `amount` agreed with the channel owner, and a `status` saying whether it was paid, is merely held, or came to nothing. Placements with no agreed price are absent.
+
+## Performance
+
+```json
+{
+  "dataAvailable": true,
+  "views": 184200, "reactions": 3120,
+  "clicks": 4380, "uniqueClicks": 3910,
+  "ctr": "0.0238", "cpm": "1.68", "costPerClick": "0.071",
+  "measuredPlacements": 3, "targetViews": 240000,
+  "capturedAt": "2026-09-21T09:14:00Z"
+}
+```
+
+<Note>
+  `dataAvailable: false` means nothing has been measured yet — `views`, `reactions` and `cpm` will all be absent. Throughout this object, a metric that has not been measured is **null, never `0`**. Zero would be a measurement; null is the absence of one.
+</Note>
+
+### Two clocks that do not run together
+
+This is the single most important thing to understand about these numbers.
+
+<Columns cols={2}>
+  <Card title="Views and reactions" icon="eye">
+    Measured by the parser on the published posts. They converge to the figure reached roughly **48 hours** after each post goes up, and then stop — tracking retention ends there and the placement completes. A settled result, not a live counter.
+  </Card>
+  <Card title="Clicks" icon="arrow-pointer">
+    Measured on our own redirect: every link in a published post points at `go.aflux.ai` first, so a click is counted before the reader is sent on to you. They keep accruing for as long as the post stays up.
+  </Card>
+</Columns>
+
+<Warning>
+  Because views stop at ~48h while clicks keep arriving, **`ctr` drifts downward** over the weeks after a campaign finishes. Compare it between campaigns of similar age — never between a fresh one and a finished one.
+</Warning>
+
+### Reading each field
+
+| Field | What it is |
+|---|---|
+| `views` | Views on the published posts, summed over the **measured** placements. |
+| `reactions` | Reactions on the same posts, summed the same way. |
+| `clicks` | Link follows, repeat clicks included. |
+| `uniqueClicks` | The same clicks counted one per IP, **over the whole campaign** — a reader who clicked in two channels is one person here, which is why this is not the sum of the placements' own unique counts. `clicks − uniqueClicks` is the readers who came back. |
+| `ctr` | A **fraction, not a percent**: `0.0238` means 2.38%. Uses total clicks, matching how the figure is quoted in the market. |
+| `cpm` | Cost per 1000 views of the **measured placements only** — their own payouts over their own views. |
+| `costPerClick` | The same measured-placements-only money, over total clicks. |
+| `measuredPlacements` | How many placements the measured figures cover. |
+| `targetViews` | The only forecast here: expected views summed over every placement that can still deliver a post or already has. |
+| `capturedAt` | When the newest snapshot behind these figures was taken — how fresh `views` is. |
+
+<Warning>
+  Always read `cpm` and `costPerClick` next to `measuredPlacements`. While some placements are still unmeasured, both are a **partial** price — not the campaign's final cost per view. `cpm` divides the measured placements' payouts by their own views; it is not the campaign's whole `spent` over a measured subset of its audience.
+</Warning>
+
+## Per-placement figures
+
+The same distinction repeats on each placement, where it is easier to reason about:
+
+| Forecast | Measured |
+|---|---|
+| `expectedViews` — from the channel's statistics | `views` — what the post collected |
+| — | `reactions` |
+| — | `clicks`, `uniqueClicks` |
+
+`expectedViews` resolves to `avgAdReach24h`, or `avgReach` when ad posts were never measured on that channel. The same number the campaign's expected-views total and the per-deal price cap are computed from. It is null — never `0` — when the channel carries no usable reach at all.

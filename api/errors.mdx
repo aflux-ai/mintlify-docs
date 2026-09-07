@@ -1,0 +1,37 @@
+---
+title: "Errors"
+description: "One error shape, and what each status code means here."
+---
+
+Every failure answers with the same body:
+
+```json
+{ "error": "Unknown placeholder {source} in destinationUrl" }
+```
+
+The HTTP status carries the category; `error` is English prose for a human. Branch on the status, not on the wording.
+
+## Status codes
+
+| Status | What it means here |
+|---|---|
+| `400` | The request is wrong. Ad copy that breaks a rule, an unknown `{placeholder}`, a strike-out list that leaves no channels, an amount that is not a decimal. The message names the specific problem. |
+| `401` | Missing, unknown, disabled or expired API key. See [Authentication](/api/authentication). |
+| `402` | **Not enough money.** Your balance does not cover what you asked for, or an API key's credit limit is exhausted. [Top up](/billing/deposits) or raise the key's limit. |
+| `403` | Authenticated, but not allowed to touch this object. |
+| `404` | No such object — or it belongs to someone else. |
+| `409` | The object is not in a state that allows this. Approving a placement that is not awaiting approval, for instance. |
+| `500` | Our fault. Safe to retry with the same `idempotencyKey`. |
+| `502` | An upstream service Aflux depends on failed — the AI provider, the channel index, the payment provider. Transient; retry. |
+
+## Validation errors are not errors
+
+Ad-copy validation is the exception worth knowing about. `POST /api/v1/campaigns/ad-copy/validate` answers **`200`** with `valid: false` and a list of problems — the text being wrong is the expected outcome of asking, not a failed request.
+
+Campaign creation, by contrast, refuses the same text with a `400` whose message lists every problem and the span of markup each occupies. See [Ad copy](/guides/ad-copy).
+
+## Retrying safely
+
+Only campaign creation is idempotent, through `idempotencyKey`. Reuse the same UUID for a retry of the same intent; anything else creates a second campaign and a second charge.
+
+Everything else is either a read, or an action guarded by the object's own state — approving an already-approved placement is a `409`, not a double charge.

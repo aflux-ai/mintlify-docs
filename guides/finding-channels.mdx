@@ -1,0 +1,93 @@
+---
+title: "Finding channels"
+description: "Three searches, what each is good for, and why the match token decides what a campaign can ever buy."
+---
+
+Every campaign is created against a `matchToken` from one of three searches. The token fixes the channel set: **campaign creation buys exactly the channels cached under it**, and a channel outside that search can never be bought by that campaign.
+
+## Three ways to search
+
+<Tabs>
+  <Tab title="From your ad copy">
+    ```bash
+    curl -X POST "$AFLUX_API/campaigns/match-channels" \
+      -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+      -d '{"projectId":"<uuid>","adCopy":"*Staking is live* -- {open the app}","platform":"TELEGRAM"}'
+    ```
+
+    Derives the search from the text plus the project's AI context. The ad copy here is used **only** as a brief — it is deliberately not judged as publishable copy, because this request carries no `destinationUrl` and the foreign-domain rule cannot be evaluated without one. [Validate](/guides/ad-copy) separately.
+  </Tab>
+  <Tab title="From a sentence">
+    ```bash
+    curl -X POST "$AFLUX_API/campaigns/match-channels-by-prompt" \
+      -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+      -d '{"projectId":"<uuid>","prompt":"TON and DeFi channels, 20K+ subscribers, English-speaking traders, no giveaway posts"}'
+    ```
+
+    One sentence carries several kinds of requirement, and each is routed to where it can be enforced: the subject matter becomes the semantic query, the audience language becomes a language filter, stated numbers become audience filters, and negations become instructions to the relevance classifier — the only step that can honour a "no …".
+
+    This search needs no project AI context; the prompt says everything. `projectId` is still required because the token is bound to it.
+  </Tab>
+  <Tab title="Look-alikes">
+    ```bash
+    curl -X POST "$AFLUX_API/campaigns/similar-channels" \
+      -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+      -d '{"projectId":"<uuid>","seedChannelIds":[1234,5678],"matchToken":"<previous token>"}'
+    ```
+
+    Seeds are averaged into **one** query point, not searched for one by one. Seeds that sit close together describe a single kind of channel and give a sharp result; scattered seeds average into a vague point in the middle and give a vague one. Pick channels that belong together.
+  </Tab>
+</Tabs>
+
+Don't know what to ask for? `POST /api/v1/campaigns/generate-channel-prompt` writes a prompt on your behalf from your ad copy, capped at 300 characters — a search box, not a brief. Drop it straight into `match-channels-by-prompt`.
+
+## Extending a selection instead of replacing it
+
+Pass the previous `matchToken` to a look-alike search and the seeds are carried into the new list, at its head, with `relevancy: 1`. The selection **extends**.
+
+<Warning>
+  Omit the token and the response carries the look-alikes alone — the seeds are gone from it, and since a campaign buys only what is cached under the token it consumes, those seeds could no longer be bought at all.
+</Warning>
+
+Seeds never come back among the look-alikes themselves: a seed is its own closest look-alike and would fill the top of the answer. They are re-added from `matchToken` when one is given. A token belonging to another user, project or platform is refused; an expired one is treated as absent.
+
+## Reading the results
+
+```json
+{
+  "matchToken": "…",
+  "channels": [
+    {
+      "channelId": 1234,
+      "platform": "TELEGRAM",
+      "channelUsername": "ton_daily",
+      "channelTitle": "TON Daily",
+      "subscribers": 48210,
+      "relevancy": 0.87,
+      "score": 0.79,
+      "avgReach": 12400,
+      "fraudScore": 0.04,
+      "managerUsername": "ton_daily_ads"
+    }
+  ],
+  "filters": { "minSubscribers": 20000, "language": "en", "ranking": "balanced" }
+}
+```
+
+| Field | Meaning |
+|---|---|
+| `relevancy` | How well the channel matches the query. |
+| `score` | The ranking score the list is ordered by. |
+| `avgReach` | Average views of an ordinary post. |
+| `fraudScore` | Suspected inauthentic audience. Lower is better. |
+| `managerUsername` | The contact the agent will negotiate with, when one was found. |
+
+## Checking how you were read
+
+`filters` comes back **only** from `match-channels-by-prompt` — the only search that infers its filters rather than being told them. It reports what was read out of your sentence, so `20K+ subscribers` appears as `minSubscribers: 20000`. If that is not what you meant, reword and search again.
+
+An absent field means no such filter narrowed the search. `ranking` (`balanced`, `max_reach`, `max_engagement`) and `minManagerContactConfidence` (`any`, `low`, `medium`, `high`) always come back, because the search always ranks somehow and always applies a contact requirement.
+
+## Striking channels off
+
+You do not have to buy everything a search returned. Pass `excludedChannelIds` to campaign creation and those channels become neither placements nor part of the queue behind them — the campaign can never come back to one of them later. Ids outside the previewed set are ignored; a strike-out list that leaves nothing at all is a `400`.

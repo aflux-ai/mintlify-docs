@@ -1,0 +1,61 @@
+---
+title: "Protocol"
+description: "Revision 2026-07-28 — what it removed, what it added, and the error split that matters most."
+---
+
+Aflux implements MCP revision **`2026-07-28`**. It is not backwards compatible with the revisions before it, and most of what it removed is what a reader coming from an older MCP server will look for and not find.
+
+## What is gone
+
+| Removed | Detail |
+|---|---|
+| The `initialize` handshake | No `initialize` / `notifications/initialized`. Every request stands alone and carries its own protocol version, client identity and capabilities in `_meta`. |
+| Protocol sessions | No `Mcp-Session-Id`. An incoming one is ignored; we never mint one. |
+| The GET stream | `GET /mcp` and `DELETE /mcp` answer **`405`**, not `401` — an older client is asking for something that no longer exists, and that is the honest answer. |
+| SSE resumability | `Last-Event-ID` is ignored. |
+| `roots`, `sampling`, `logging` | Deprecated in the revision; not implemented. |
+
+## What is new
+
+- `server/discover`
+- The `MCP-Protocol-Version`, `Mcp-Method` and `Mcp-Name` headers, validated **against the body** — any disagreement is `-32020`.
+- `resultType` on every result.
+- `ttlMs` and `cacheScope` on cacheable list results.
+
+## Two kinds of failure
+
+Putting a failure in the wrong one is the easiest mistake to make against this server, and the distinction is deliberate:
+
+<Columns cols={2}>
+  <Card title="Protocol errors" icon="plug-circle-xmark">
+    Malformed JSON-RPC, a bad header, an unknown method, an unknown tool. Travel as a JSON-RPC `error`.
+
+    **The client is expected to fix these.** A model usually cannot.
+  </Card>
+  <Card title="Tool execution errors" icon="triangle-exclamation">
+    A project that is not there, a malformed date, an exhausted balance. Travel as a normal result with `isError: true`.
+
+    **The client hands these to the model** — the sentence explaining what went wrong is what lets it retry correctly.
+  </Card>
+</Columns>
+
+Authentication is the one case that is neither: a request with no valid key is a plain HTTP **`401`**, not a JSON-RPC error and not a tool failure.
+
+## Browser origins
+
+`/mcp` is meant for desktop clients, which send no `Origin` header at all — that is the normal case and it is allowed. An `Origin` that **is** present and is not on the server's allow-list is refused with `403`, per the DNS-rebinding rule.
+
+If you need a browser origin allowed, ask support.
+
+## A minimal call
+
+```bash
+curl -X POST https://backend.aflux.ai/mcp \
+  -H "Authorization: Bearer $AFLUX_KEY" \
+  -H "Content-Type: application/json" \
+  -H "MCP-Protocol-Version: 2026-07-28" \
+  -H "Mcp-Method: tools/list" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+```
+
+The `Mcp-Method` header must agree with the `method` in the body. Disagreement is `-32020`.

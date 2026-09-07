@@ -1,109 +1,54 @@
 ---
-title: "Aflux REST API Overview: Base URL, Auth, and Errors"
-sidebarTitle: "Overview"
-description: "Learn how to call the Aflux REST API: base URL, request and response format, HTTP status codes, and rate limiting. Requires Business or Enterprise plan."
+title: "API overview"
+description: "Base URL, conventions, pagination and the shape of every response."
 ---
 
-The Aflux REST API gives you programmatic access to the full Aflux document workflow platform. You can automate signature requests, trigger email campaigns, generate and manage QR codes, and pull analytics data — all from your own applications and integrations.
+The Aflux REST API is the same surface the console runs on — 60 endpoints, no separate feature set.
 
-<Note>
-  API access is available on **Business** and **Enterprise** plans only. If you are on a Free or Pro plan, upgrade your subscription in the [Aflux dashboard](https://app.aflux.io) to unlock API access.
-</Note>
+<Card title="Base URL" icon="link">
+  ```
+  https://backend.aflux.ai/api/v1
+  ```
+</Card>
 
-## What You Can Do with the API
+The endpoint pages in this section are generated from the live OpenAPI document at [`https://backend.aflux.ai/openapi`](https://backend.aflux.ai/openapi), so they describe exactly what is deployed.
+
+## Conventions
+
+<AccordionGroup>
+  <Accordion title="Money is a decimal string">
+    Every amount — budgets, prices, balances, fees — is a JSON **string** like `"500.00"`, never a float. Parse it as a decimal; never as a binary floating-point number.
+  </Accordion>
+  <Accordion title="Dates and timestamps">
+    Calendar dates (`startsAt`, `endsAt`, `plannedDate`, `agreedDate`) are `YYYY-MM-DD`. Timestamps (`createdAt`, `capturedAt`, …) are RFC 3339 with an offset.
+  </Accordion>
+  <Accordion title="Identifiers">
+    Almost everything is a UUID. Channels are the exception: `channelId` is a 64-bit integer, because it comes from the channel index rather than from Aflux.
+  </Accordion>
+  <Accordion title="Null means 'not measured'">
+    In analytics, a metric that has not been measured is `null`, never `0`. Zero is a measurement; null is the absence of one. See [Analytics](/guides/analytics).
+  </Accordion>
+  <Accordion title="Pagination">
+    List endpoints answer with `items` and, where the list can be long, a `nextCursor`. Pass it back to continue. An absent `nextCursor` means you have reached the end.
+  </Accordion>
+  <Accordion title="Idempotency">
+    Campaign creation takes an `idempotencyKey` you generate. Reuse it when retrying the same request; a fresh UUID means a genuinely new campaign — and a new charge.
+  </Accordion>
+</AccordionGroup>
+
+## Where to start
 
 <CardGroup cols={2}>
-  <Card title="E-Signatures" icon="pen-nib">
-    Programmatically create and send signature requests, track signer status, retrieve signed documents, and build custom signing workflows into your application.
+  <Card title="Authentication" icon="key" href="/api/authentication">
+    How to send your API key.
   </Card>
-  <Card title="Email Campaigns" icon="envelope">
-    Trigger bulk email campaigns, manage contact lists, and retrieve delivery and engagement analytics without leaving your own system.
+  <Card title="Errors" icon="triangle-exclamation" href="/api/errors">
+    The error shape and what each status means.
   </Card>
-  <Card title="QR Codes" icon="qrcode">
-    Generate QR codes, update their target URLs, control access settings, and retrieve per-code scan analytics from any environment.
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    A campaign end to end with `curl`.
   </Card>
-  <Card title="Analytics" icon="chart-bar">
-    Retrieve signature completion rates, email delivery statistics, and QR code scan data to feed your own dashboards and reporting tools.
+  <Card title="MCP server" icon="robot" href="/mcp/overview">
+    The same capabilities as tools for an AI agent.
   </Card>
 </CardGroup>
-
-## Base URL
-
-All API requests are made to the following base URL:
-
-```
-https://api.aflux.io/v1
-```
-
-Every endpoint path is appended to this base. For example, the signatures endpoint is `https://api.aflux.io/v1/signatures`.
-
-## Authentication
-
-The Aflux API uses API keys passed as Bearer tokens in the `Authorization` header of every request. See the [Authentication](/api/authentication) page for instructions on generating and managing your API keys.
-
-## Request Format
-
-Send all request bodies as JSON and include the `Content-Type: application/json` header on every request that has a body.
-
-```bash
-curl https://api.aflux.io/v1/signatures \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "Content-Type: application/json"
-```
-
-## Response Format
-
-All responses are returned as JSON. The Aflux API uses standard HTTP status codes to indicate the success or failure of a request. Successful responses return the requested resource or a confirmation object. Error responses return a structured error object.
-
-## Rate Limiting
-
-Rate limits apply to all API requests and vary by plan. When you exceed your limit, the API returns a `429 Too Many Requests` response.
-
-<Note>
-  Check your current rate limits and usage in the Aflux dashboard under **Settings → API Keys**. Exact limits per plan will be published when they are finalised.
-</Note>
-
-## Error Format
-
-When a request fails, the API returns a JSON error object with a machine-readable `code`, a human-readable `message`, and the HTTP `status` code.
-
-```json
-{
-  "error": {
-    "code": "invalid_request",
-    "message": "The 'signers' field is required.",
-    "status": 400
-  }
-}
-```
-
-## HTTP Status Codes
-
-The following table lists all HTTP status codes the Aflux API may return.
-
-| Status Code | Meaning |
-|-------------|---------|
-| `200` | OK — the request succeeded |
-| `201` | Created — the resource was created successfully |
-| `400` | Bad Request — invalid or missing parameters |
-| `401` | Unauthorized — invalid or missing API key |
-| `403` | Forbidden — feature not available on your plan |
-| `404` | Not Found — the requested resource does not exist |
-| `429` | Too Many Requests — rate limit exceeded |
-| `500` | Internal Server Error — contact [Aflux support](mailto:support@aflux.io) |
-
-## Making Your First Request
-
-The example below retrieves your existing signature requests. Replace `YOUR_API_KEY` with a real key from your dashboard (see [Authentication](/api/authentication)).
-
-```bash
-curl https://api.aflux.io/v1/signatures \
-  -H "Authorization: Bearer afxk_live_abc123..." \
-  -H "Content-Type: application/json"
-```
-
-A successful response returns a JSON array of signature request objects. A `401` response means your key is missing or invalid — double-check it in **Settings → API Keys**.
-
-<Tip>
-  Use a tool like [Postman](https://www.postman.com) or [Insomnia](https://insomnia.rest) during development to explore the API interactively before writing code.
-</Tip>

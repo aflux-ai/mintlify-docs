@@ -1,143 +1,191 @@
 ---
-title: "Get Started with Aflux: Account, Storage, and First Workflow"
-sidebarTitle: "Quick Start"
-description: "Create your Aflux account, connect cloud storage, and send your first email, collect a signature, or generate a QR code in under five minutes."
+title: "Quickstart"
+description: "Run a campaign end to end through the API — project, ad copy, channels, budget, approval."
 ---
 
-Aflux brings your entire document workflow — bulk email campaigns, e-signatures, and QR codes — into a single unified platform. This guide walks you through creating a free account, connecting your cloud storage, and completing your very first workflow in under five minutes.
+This walkthrough creates a live campaign with `curl`. Everything here is also available in the [console](https://console.aflux.ai); the API just makes each step explicit.
 
-## Prerequisites
+<Note>
+  A campaign commits its **entire budget** the moment you create it. Top up your balance first — see [Deposits](/billing/deposits) — and use a small budget while you are finding your feet.
+</Note>
 
-Before you begin, make sure you have:
-
-- A modern web browser (Chrome, Firefox, Safari, or Edge)
-- A free Aflux account — register at [https://app.aflux.io/register](https://app.aflux.io/register)
-
----
-
-## Step 1: Create Your Account
+## Before you start
 
 <Steps>
-  <Step title="Go to the registration page">
-    Open [https://app.aflux.io/register](https://app.aflux.io/register) in your browser.
+  <Step title="Get an API key">
+    In the console, open **Settings → API keys** and create one. The full key is shown **once**, at creation. It looks like `sk-af-v1-` followed by 32 hex characters. See [API keys](/account/api-keys).
   </Step>
-  <Step title="Enter your details and sign up">
-    Fill in your full name, email address, and a secure password, then click **Sign Up**. Aflux will send a verification email to the address you provided.
-  </Step>
-  <Step title="Verify your email address">
-    Open the email from Aflux and click the **Verify Email** link. The link expires after 24 hours, so complete this step promptly.
-  </Step>
-  <Step title="Land on your dashboard">
-    After verification you are redirected to the Aflux dashboard — your central hub for all document workflows. From here you can access Bulk Email, E-Signature, QR Codes, and platform settings.
+  <Step title="Export it">
+    ```bash
+    export AFLUX_KEY="sk-af-v1-..."
+    export AFLUX_API="https://backend.aflux.ai/api/v1"
+    ```
   </Step>
 </Steps>
 
----
+Every request below sends the key as a bearer token:
 
-## Step 2: Connect Your Cloud Storage
+```bash
+curl -H "Authorization: Bearer $AFLUX_KEY" "$AFLUX_API/users/me"
+```
 
-Aflux uses a bring-your-own-storage model. Connecting a cloud provider lets you access and attach files directly from within every module.
+## 1. Upload a logo
 
-<Steps>
-  <Step title="Open Integrations settings">
-    Click your **avatar** in the top-right corner of the dashboard, then select **Settings → Integrations**.
-  </Step>
-  <Step title="Connect Google Drive">
-    Under the **Cloud Storage** section, click **Connect** next to **Google Drive**.
-  </Step>
-  <Step title="Authorize Aflux in the Google OAuth dialog">
-    A Google sign-in window opens. Select the Google account you want to link and click **Allow** to grant Aflux read/write access to your Drive.
-  </Step>
-  <Step title="Confirm the connection">
-    Your Google Drive now appears as a selectable storage source throughout all Aflux modules — including when uploading PDFs for e-signature or attaching assets to email campaigns.
-  </Step>
-</Steps>
+A project needs a logo. Uploads are two calls: reserve a slot, then send the bytes.
 
-<Info>
-  **OneDrive and Dropbox integrations are coming soon.** You will be able to connect them from the same **Settings → Integrations** page once they are available.
-</Info>
+```bash
+UPLOAD=$(curl -s -X POST "$AFLUX_API/uploads/init" \
+  -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+  -d '{"assetKind":"PROJECT_LOGO","contentType":"image/png","sizeBytes":48123,"originalName":"logo.png"}')
 
----
+UPLOAD_ID=$(echo "$UPLOAD" | jq -r .uploadId)
 
-## Step 3: Choose Your First Workflow
+LOGO=$(curl -s -X PUT "$AFLUX_API/uploads/$UPLOAD_ID/content" \
+  -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/octet-stream" \
+  --data-binary @logo.png)
 
-Pick the workflow that best matches what you want to accomplish today. Each tab below walks you through the core steps and links to the full module guide.
+LOGO_ID=$(echo "$LOGO" | jq -r .assetId)
+```
 
-<Tabs>
-  <Tab title="Send an Email Campaign">
-    Reach your contacts with a professionally designed email campaign — all without leaving Aflux.
+`sizeBytes` and `contentType` are checked against the actual bytes you send, so they have to be right. Limits are in [Media](/guides/media).
 
-    <Steps>
-      <Step title="Create a campaign">
-        Navigate to **Bulk Email → New Campaign**. Give your campaign a name, choose a sender address, and build your email using the drag-and-drop editor or start from a template.
-      </Step>
-      <Step title="Add your contacts">
-        Import a CSV file or manually add contacts to a list. Apply personalization tags (e.g. `{{first_name}}`) to tailor the message to each recipient.
-      </Step>
-      <Step title="Schedule or send">
-        Preview your email, set a send time (or send immediately), and click **Launch Campaign**. Track opens, clicks, and bounces in real time from the campaign analytics dashboard.
-      </Step>
-    </Steps>
+## 2. Create a project
 
-    Ready to go deeper? See the full [Bulk Email guide](/modules/bulk-email).
-  </Tab>
-  <Tab title="Request a Signature">
-    Collect legally binding e-signatures on any PDF — with a full audit trail and eIDAS compatibility.
+Let Aflux read your site first — it drafts the name, description and brand colours for you.
 
-    <Steps>
-      <Step title="Upload your PDF">
-        Go to **E-Signature → New Request** and upload the document you need signed. You can pull files directly from your connected Google Drive.
-      </Step>
-      <Step title="Add signers and place fields">
-        Enter each signer's name and email address. Drag signature, initials, and date fields onto the document for each signer, and choose between a sequential or parallel signing order.
-      </Step>
-      <Step title="Send the request">
-        Click **Send for Signature**. Each signer receives an email with a secure link. You can monitor the signing status and receive notifications at every step from the E-Signature dashboard.
-      </Step>
-    </Steps>
+```bash
+curl -s -X POST "$AFLUX_API/projects/analyze-url" \
+  -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+  -d '{"url":"https://example.com","sourceType":"WEBSITE"}'
+```
 
-    Ready to go deeper? See the full [E-Signature guide](/modules/e-signature).
-  </Tab>
-  <Tab title="Generate a QR Code">
-    Create dynamic QR codes that link to any file or URL — with scan analytics and full lifecycle control.
+Then generate the AI context — the business description every later step reasons from — and create the project:
 
-    <Steps>
-      <Step title="Select your file or destination">
-        Go to **QR Codes → New Code** and choose the file from your connected cloud storage or paste in a target URL.
-      </Step>
-      <Step title="Customize your code">
-        Apply your brand colors, add a logo, set an expiration date or scan limit, and optionally protect the destination with a password.
-      </Step>
-      <Step title="Download and deploy">
-        Click **Generate**, then download your QR code as a PNG or SVG. Share it in print, email, or on the web. Scan activity is tracked in real time on your QR Codes dashboard.
-      </Step>
-    </Steps>
+```bash
+CONTEXT=$(curl -s -X POST "$AFLUX_API/projects/context/generate" \
+  -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+  -d "{\"name\":\"Example\",\"description\":\"A DeFi wallet for TON\",
+       \"logoLightAssetId\":\"$LOGO_ID\",\"brandColors\":[\"#5bc8ff\"],
+       \"sourceUrl\":\"https://example.com\"}")
 
-    Ready to go deeper? See the full [QR Codes guide](/modules/qr-codes).
-  </Tab>
-</Tabs>
+PROJECT=$(curl -s -X POST "$AFLUX_API/projects" \
+  -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+  -d "{\"sourceType\":\"WEBSITE\",\"sourceUrl\":\"https://example.com\",
+       \"name\":\"Example\",\"description\":\"A DeFi wallet for TON\",
+       \"logoLightAssetId\":\"$LOGO_ID\",\"brandColors\":[\"#5bc8ff\"],
+       \"aiContext\":$(echo "$CONTEXT" | jq -c .aiContext)}")
 
----
+PROJECT_ID=$(echo "$PROJECT" | jq -r .id)
+```
 
-## Next Steps
+See [Projects](/guides/projects) for what the context is used for and how to revise it.
 
-Explore each module and platform feature in detail using the guides below.
+## 3. Write and validate the ad copy
+
+```bash
+COPY=$(curl -s -X POST "$AFLUX_API/campaigns/generate-ad-copy" \
+  -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+  -d "{\"projectContext\":$(echo "$PROJECT" | jq -c .aiContext),
+       \"userNotes\":\"Announce our new staking feature. Friendly, no hype.\",
+       \"objective\":\"TRAFFIC\",\"destinationUrl\":\"https://example.com/staking\"}")
+
+curl -s -X POST "$AFLUX_API/campaigns/ad-copy/validate" \
+  -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+  -d "{\"text\":$(echo "$COPY" | jq .adCopy),\"destinationUrl\":\"https://example.com/staking\"}"
+```
+
+Validation answers with **every** problem at once, each positioned so an editor can underline it. Campaign creation applies exactly the same rules, so a text that validates is a text that creates. See [Ad copy](/guides/ad-copy).
+
+## 4. Find channels
+
+```bash
+MATCH=$(curl -s -X POST "$AFLUX_API/campaigns/match-channels-by-prompt" \
+  -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+  -d '{"prompt":"TON and DeFi channels, 20K+ subscribers, English-speaking traders"}')
+
+MATCH_TOKEN=$(echo "$MATCH" | jq -r .matchToken)
+echo "$MATCH" | jq '.filters, (.channels | length)'
+```
+
+<Warning>
+  Keep the `matchToken`. Campaign creation consumes exactly one token and buys exactly the channels cached under it. A channel that is not in that search cannot be bought.
+</Warning>
+
+`filters` shows how your sentence was read — `20K+ subscribers` comes back as `minSubscribers: 20000`. If it read you wrong, correct the prompt and search again. See [Finding channels](/guides/finding-channels).
+
+## 5. Ask for a budget spread
+
+```bash
+DIST=$(curl -s -X POST "$AFLUX_API/campaigns/distribution/suggest" \
+  -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+  -d '{"budget":"500.00","startsAt":"2026-09-15","endsAt":"2026-09-30","objective":"TRAFFIC"}')
+```
+
+Each day comes back with an amount and a `recommendation` of `AI_BEST`, `NORMAL` or `LOW_TRAFFIC`.
+
+## 6. Create the campaign
+
+```bash
+CAMPAIGN=$(curl -s -X POST "$AFLUX_API/campaigns" \
+  -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+  -d "{\"idempotencyKey\":\"$(uuidgen)\",
+       \"matchToken\":\"$MATCH_TOKEN\",
+       \"projectId\":\"$PROJECT_ID\",
+       \"name\":\"Staking launch\",
+       \"destinationUrl\":\"https://example.com/staking?utm_source={channel}&utm_campaign={campaign}\",
+       \"adCopy\":$(echo "$COPY" | jq .adCopy),
+       \"platform\":\"TELEGRAM\",
+       \"objective\":\"TRAFFIC\",
+       \"distributionType\":\"RECOMMENDED\",
+       \"mediaAssetIds\":[],
+       \"budget\":\"500.00\",
+       \"startsAt\":\"2026-09-15\",
+       \"endsAt\":\"2026-09-30\",
+       \"dailyDistribution\":$(echo "$DIST" | jq -c '[.days[] | {date, amount}]'),
+       \"approvalMode\":\"USER\",
+       \"creativeChangesAllowed\":true}")
+
+CAMPAIGN_ID=$(echo "$CAMPAIGN" | jq -r .id)
+```
+
+Two things worth noticing:
+
+- `{channel}` and `{campaign}` in `destinationUrl` are substituted per placement, so your own analytics can tell channels apart. See [Campaigns](/guides/campaigns).
+- `idempotencyKey` makes a retried request safe. Reuse the same UUID when you retry; use a fresh one for a genuinely new campaign.
+
+## 7. Approve the deals
+
+The agent now contacts channel owners. Poll the placements:
+
+```bash
+curl -s "$AFLUX_API/campaigns/$CAMPAIGN_ID/placements" \
+  -H "Authorization: Bearer $AFLUX_KEY" | jq '.items[] | {channelUsername, status, agreedCost, agreedDate}'
+```
+
+When one reaches `PENDING_APPROVAL`, read what was agreed and approve it:
+
+```bash
+curl -s -X POST "$AFLUX_API/campaign-placements/$PLACEMENT_ID/approve" \
+  -H "Authorization: Bearer $AFLUX_KEY"
+```
+
+Approval is what commits money to that channel. See [Placements](/guides/placements) for the full status list and what each one means.
+
+## 8. Read the results
+
+```bash
+curl -s "$AFLUX_API/campaigns/$CAMPAIGN_ID/analytics" -H "Authorization: Bearer $AFLUX_KEY"
+```
+
+Views and reactions arrive after publication and settle roughly 48 hours later; clicks are measured on our own redirect. [Analytics](/guides/analytics) explains what each figure does and does not include.
+
+## Next
 
 <CardGroup cols={2}>
-  <Card title="Bulk Email" icon="envelope" href="/modules/bulk-email">
-    Build and send GDPR-compliant email campaigns with drag-and-drop design, contact management, personalization, and real-time analytics.
+  <Card title="Concepts" icon="book" href="/concepts">
+    The vocabulary — projects, campaigns, placements, balance.
   </Card>
-  <Card title="E-Signature" icon="pen-nib" href="/modules/e-signature">
-    Send documents for legally binding e-signatures with multi-signer workflows, audit trails, and eIDAS-compatible encryption.
-  </Card>
-  <Card title="QR Codes" icon="qrcode" href="/modules/qr-codes">
-    Generate dynamic QR codes with lifecycle controls, scan analytics, access restrictions, and custom branding.
-  </Card>
-  <Card title="Team Management" icon="users" href="/platform/team-management">
-    Invite teammates, assign admin, member, or guest roles, and control access to modules and files across your organization.
+  <Card title="MCP server" icon="robot" href="/mcp/overview">
+    Do all of the above from your own AI agent instead.
   </Card>
 </CardGroup>
-
-<Tip>
-  **Need help?** Reach out to the Aflux support team at [support@aflux.io](mailto:support@aflux.io) — we're happy to assist you get up and running.
-</Tip>

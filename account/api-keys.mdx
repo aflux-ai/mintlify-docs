@@ -1,0 +1,57 @@
+---
+title: "API keys"
+description: "Creating keys, what a spend limit does, and how to retire one."
+---
+
+An API key authenticates the REST API and the [MCP server](/mcp/overview). Create one in the console under **Settings → API keys**, or through the API.
+
+```bash
+curl -X POST "$AFLUX_API/api-keys" \
+  -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+  -d '{"name":"agent-prod","resetPeriod":"MONTHLY","expiration":"D_30","creditLimit":"200.00"}'
+```
+
+```json
+{ "id": "…", "name": "agent-prod", "prefix": "sk-af-v1-a1b2c3d4",
+  "plainKey": "sk-af-v1-a1b2c3d4e5f6…", "status": "ACTIVE" }
+```
+
+<Warning>
+  `plainKey` is shown **once**, at creation, and never again. Store it somewhere safe before you close the response. Afterwards only the `prefix` is visible, which is what identifies the key in a list.
+</Warning>
+
+A key looks like `sk-af-v1-` followed by 32 hex characters. Keys are stored hashed — nobody at Aflux can read yours back to you.
+
+## Spend limits
+
+| Field | What it does |
+|---|---|
+| `creditLimit` | How much this key may spend. Null means no limit. |
+| `resetPeriod` | When the counter goes back to zero: `NO_LIMIT`, `DAILY`, `WEEKLY`, `MONTHLY`. |
+| `currentUsage` | Spent so far in the current period. |
+
+<Tip>
+  A key handed to an autonomous agent should carry a `creditLimit`. Campaign creation charges the whole budget in one call — a limit is what stops a bad prompt from becoming a large invoice.
+</Tip>
+
+## Expiry
+
+`expiration` is fixed at creation: `NO_EXPIRATION`, `H_1`, `D_1`, `D_7` or `D_30`. A key past its `expiresAt` moves to `EXPIRED` and stops authenticating.
+
+## Managing keys
+
+```bash
+curl "$AFLUX_API/api-keys" -H "Authorization: Bearer $AFLUX_KEY"
+
+curl -X POST "$AFLUX_API/api-keys/$KEY_ID/disable" -H "Authorization: Bearer $AFLUX_KEY"
+curl -X POST "$AFLUX_API/api-keys/$KEY_ID/enable"  -H "Authorization: Bearer $AFLUX_KEY"
+curl -X DELETE "$AFLUX_API/api-keys/$KEY_ID"       -H "Authorization: Bearer $AFLUX_KEY"
+```
+
+`PATCH` changes the name and the credit limit. Status is one of `ACTIVE`, `DISABLED`, `EXPIRED`.
+
+`lastUsedAt` tells you whether a key is still in use before you delete it.
+
+<Warning>
+  A key carries your account's full authority — every campaign it creates spends your balance. Treat it as a password: never commit it, never put it in a URL, and disable it the moment you suspect it leaked.
+</Warning>

@@ -1,0 +1,106 @@
+---
+title: "Campaigns"
+description: "Budget, dates, distribution, and the destination URL placeholders that let your own analytics tell channels apart."
+---
+
+A campaign is one flight of advertising under a project. Creating it is the moment money is committed, so it is worth understanding what each field decides.
+
+<Warning>
+  Creating a campaign commits its **entire budget** from your balance. Not a hold per placement — the whole amount, at once.
+</Warning>
+
+## Creating one
+
+```bash
+curl -X POST "$AFLUX_API/campaigns" \
+  -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "idempotencyKey": "3f0c…",
+    "matchToken": "…",
+    "projectId": "…",
+    "name": "Staking launch",
+    "destinationUrl": "https://example.com/staking?utm_source={channel}&utm_campaign={campaign}",
+    "adCopy": "*Staking is live.* Earn on idle TON -- {open the app}.",
+    "platform": "TELEGRAM",
+    "objective": "TRAFFIC",
+    "distributionType": "RECOMMENDED",
+    "mediaAssetIds": [],
+    "budget": "500.00",
+    "startsAt": "2026-09-15",
+    "endsAt": "2026-09-30",
+    "dailyDistribution": [{"date": "2026-09-15", "amount": "40.00"}],
+    "approvalMode": "USER",
+    "creativeChangesAllowed": true,
+    "excludedChannelIds": [9911]
+  }'
+```
+
+| Field | Notes |
+|---|---|
+| `idempotencyKey` | A UUID you generate. Reuse it when retrying the same creation; use a fresh one for a genuinely new campaign. |
+| `matchToken` | From a [channel search](/guides/finding-channels). Fixes what this campaign may ever buy. |
+| `objective` | `AWARENESS`, `TRAFFIC`, `CONVERSIONS` or `APP_INSTALLS`. Optional. |
+| `distributionType` | `RECOMMENDED` (take the suggested spread) or `MANUAL` (your own). |
+| `budget` | A decimal **string**. |
+| `dailyDistribution` | One `{date, amount}` per day of the window. |
+| `approvalMode` | `USER` — you approve each deal; `OPERATOR` — an Aflux operator does. |
+| `creativeChangesAllowed` | Whether a channel owner may propose his own wording. Defaults to `true`. |
+| `excludedChannelIds` | Channels from the match set you struck off. They become neither placements nor queue. |
+
+## Destination URL placeholders
+
+Three placeholders are substituted **per placement**, so your own reporting can tell campaigns and channels apart under the parameter names it already reads:
+
+| Placeholder | Becomes |
+|---|---|
+| `{campaign}` | The campaign's UUID |
+| `{channel}` | The handle of the channel that published the post — no `@`, lower case |
+| `{platform}` | The platform, lower case |
+
+They may sit anywhere — query string or path alike, including a bot deeplink payload:
+
+```
+https://t.me/mybot?start={campaign}-{channel}
+```
+
+Names are case-insensitive and stored lower-cased, so the value the API returns can differ from the one you sent in exactly that way.
+
+<Warning>
+  Any **other** `{name}` is rejected with a `400`. An unknown placeholder cannot be filled in and would reach the published post as literal text.
+</Warning>
+
+Because a URL carrying a placeholder is not a well-formed URI, this field is deliberately not validated as one.
+
+## Asking for a budget spread
+
+```bash
+curl -X POST "$AFLUX_API/campaigns/distribution/suggest" \
+  -H "Authorization: Bearer $AFLUX_KEY" -H "Content-Type: application/json" \
+  -d '{"budget":"500.00","startsAt":"2026-09-15","endsAt":"2026-09-30","objective":"TRAFFIC"}'
+```
+
+Each day comes back with an `amount` and a `recommendation`:
+
+| Recommendation | Meaning |
+|---|---|
+| `AI_BEST` | The strongest day in the window. |
+| `NORMAL` | An ordinary day. |
+| `LOW_TRAFFIC` | Expected to under-deliver; spend less here. |
+
+The response may also carry an `insight` — a sentence explaining the shape of the suggestion.
+
+## What can change afterwards
+
+Almost nothing. `PATCH /api/v1/campaigns/{campaignId}` accepts **only** `approvalMode` — you can hand approval to an operator or take it back, and that is all. Copy, budget, dates, channels and destination are fixed at creation.
+
+To change anything else, archive the campaign and create a new one.
+
+## Status and lifecycle
+
+A campaign's own status is one of `ACTIVE`, `COMPLETED` or `ARCHIVED`. The interesting movement happens on its [placements](/guides/placements).
+
+```bash
+curl -X POST "$AFLUX_API/campaigns/$CAMPAIGN_ID/archive" -H "Authorization: Bearer $AFLUX_KEY"
+```
+
+`DELETE /api/v1/campaigns/{campaignId}` answers with a `DeletionResult` whose `outcome` is `DELETED` or `ARCHIVED` — a campaign with history behind it is archived rather than removed.
